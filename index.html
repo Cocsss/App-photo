@@ -152,7 +152,7 @@ header .tools button:active{background:rgba(255,255,255,.12)}
   -webkit-user-select:none;user-select:none}
 #trimTop{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
   padding:calc(14px + env(safe-area-inset-top)) 14px 10px;overflow:hidden}
-#trimTop .prevCv{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+#trimTop .prevCv{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;touch-action:none;
   border-radius:var(--r3);background:#15171b;display:block}
 #trimBar{flex:0 0 auto;display:flex;align-items:center;gap:10px;
   padding:calc(10px + env(safe-area-inset-top)) 14px 4px}
@@ -1002,6 +1002,11 @@ function placeMedia(list){
       : `Ce modèle est plein. Les ${q.length} photos en trop restent dans tes médias : touche un cadre pour les utiliser.`, 5000);
   }
   autoBg();
+  /* Même logique pour un ajout groupé : sur le modèle Clip, on enchaîne. */
+  if (TPL[S.tpl] && TPL[S.tpl].name === 'Clip'){
+    const it = S.items.find(x => x.type === 'media' && x.media && x.media.kind === 'video');
+    if (it) setTimeout(() => openTrim(it), 60);
+  }
 }
 
 /* L'état neutre d'un fond. Il était recopié mot pour mot à trois endroits
@@ -2035,7 +2040,13 @@ const PANELS = {
     }, 'btn danger')))
 };
 
-function fillItem(it, m){ it.media = m; it.pz = 1; it.px = it.py = 0; autoBg(); refresh(); }
+function fillItem(it, m){
+  it.media = m; it.pz = 1; it.px = it.py = 0;
+  autoBg(); refresh();
+  /* Le modèle Clip n'existe que pour monter une vidéo : inutile de faire chercher
+     « Recadrer le temps » dans un sous-menu, on ouvre l'écran de montage. */
+  if (m.kind === 'video' && TPL[S.tpl] && TPL[S.tpl].name === 'Clip') openTrim(it);
+}
 function actions(it){
   return section(null,
     h('div', {class:'row'},
@@ -2113,7 +2124,7 @@ function actionsPanel(it){
     if (S.lib.length) wrap.appendChild(section('Ou depuis tes médias', libGrid(m => fillItem(it, m), null, 'pickgrid')));
   } else {
     const acts = h('div', {class:'acts'},
-      isVid ? h('button', {class:'act primary wide', onclick:() => openTrim(it)}, '⏱  Recadrer le temps') : null,
+      isVid ? h('button', {class:'act primary wide', onclick:() => openTrim(it)}, '✂  Monter la vidéo') : null,
       h('button', {class:'act' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; refresh(); }}, S.crop ? 'Recadrage activé' : '⤢  Recadrer'),
       filePick('↺  Remplacer', {cls:'act'}, async fs => { const ms = await ingest(fs); if (ms[0]) fillItem(it, ms[0]); }),
       h('button', {class:'act', onclick:() => { S.panelMode = 'style'; buildSheet(); }}, '✎  Style'),
@@ -2496,6 +2507,46 @@ function buildTrimUI(){
     render();
     pctx.drawImage(cv, 0, 0, pcv.width, pcv.height);
   };
+  /* Le recadrage se fait ici, sur l'aperçu, au lieu de renvoyer l'utilisateur
+     dans un autre écran. Un doigt déplace, deux doigts zooment. */
+  const pts = new Map();
+  let CG = null;
+  const compPt = e => {
+    const r = pcv.getBoundingClientRect();
+    return {x:(e.clientX - r.left)/r.width*S.W, y:(e.clientY - r.top)/r.height*S.H};
+  };
+  pcv.addEventListener('pointerdown', e => {
+    if (TRIM.tab !== 'Cadre' || !TRIM.item || !TRIM.item.media) return;
+    e.preventDefault();
+    pcv.setPointerCapture(e.pointerId);
+    pts.set(e.pointerId, compPt(e));
+    const it2 = TRIM.item;
+    if (pts.size === 1) CG = {s:compPt(e), px:it2.px || 0, py:it2.py || 0};
+    else if (pts.size === 2){
+      const [a, b] = [...pts.values()];
+      CG = {d0:Math.max(1, Math.hypot(b.x - a.x, b.y - a.y)), pz:it2.pz || 1};
+    }
+  });
+  pcv.addEventListener('pointermove', e => {
+    if (!CG || !pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, compPt(e));
+    const it2 = TRIM.item;
+    if (pts.size >= 2 && CG.d0){
+      const [a, b] = [...pts.values()];
+      it2.pz = clamp(CG.pz*Math.hypot(b.x - a.x, b.y - a.y)/CG.d0, 1, 6);
+    } else if (CG.s){
+      const p = compPt(e), r = cropRange(it2);
+      const l = local(it2, p.x - CG.s.x, p.y - CG.s.y);
+      it2.px = r.mx > 0 ? clamp(CG.px + l.x/r.mx, -1, 1) : 0;
+      it2.py = r.my > 0 ? clamp(CG.py + l.y/r.my, -1, 1) : 0;
+    }
+    draw();
+  });
+  ['pointerup', 'pointercancel'].forEach(t => pcv.addEventListener(t, e => {
+    pts.delete(e.pointerId);
+    if (!pts.size){ CG = null; markSoon(); }
+  }));
+
   const P = $('trimPanel'); P.innerHTML = '';
   const box = h('div', {class:'stripBox'});
   const cv2 = h('canvas', {width:960, height:152});
@@ -2667,7 +2718,11 @@ function buildTrimUI(){
         strip2.appendChild(pill('Retirer', () => { LUT.data = null; LUT.name = ''; paintTools(); draw(); }));
       }
     } else if (TRIM.tab === 'Cadre'){
-      strip2.appendChild(pill('Recadrer à la main', () => { S.crop = true; closeTrim(); refresh(); }, true));
+      strip2.appendChild(h('span', {class:'tval'}, 'Glisse l’image, pince pour zoomer'));
+      strip2.appendChild(pill('Recentrer', () => {
+        const it2 = TRIM.item;
+        if (it2){ it2.px = it2.py = 0; it2.pz = 1; draw(); }
+      }));
     } else {
       strip2.appendChild(pill('‹ −1 s', () => nudge(-1)));
       strip2.appendChild(pill('+1 s ›', () => nudge(1)));
