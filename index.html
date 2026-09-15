@@ -15,7 +15,8 @@
 <title>Montage</title>
 <style>
 :root{--bg:#0b0e0d;--bg2:#141918;--sheet:#161b1a;--ink:#f4f7f5;--muted:#9aa7a4;--line:#28312f;--chip:#1e2624;--accent:#d8f24b;--accent-ink:#161a10;--danger:#ff7a62;
-  --r1:10px;--r2:14px;--r3:18px;--r4:26px;--tap:48px}
+  --r1:10px;--r2:14px;--r3:18px;--r4:26px;--tap:50px;
+  --fill:#232b29;--fill-hi:rgba(255,255,255,.07);--press:cubic-bezier(.2,.8,.3,1)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;font-size:15px;overscroll-behavior:none}
@@ -34,27 +35,40 @@ h1{margin:0;font-size:21px;font-weight:650;letter-spacing:-.55px}
 .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 2px;flex:none}
 .tabs{display:flex;margin:6px 14px 4px;padding:3px;background:var(--chip);border-radius:12px;flex:none}
 .tabs button{flex:1;height:38px;border:0;background:transparent;border-radius:9px;font:inherit;font-size:14px;font-weight:600;color:var(--muted)}
-.tabs button.on{background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 12px -6px var(--accent)}
+.tabs button{transition:color .18s ease}
+.tabs button.on{background:var(--accent);color:var(--accent-ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 14px -8px var(--accent)}
 .selhead{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 2px;flex:none}
 .selhead b{font-size:17px;letter-spacing:-.2px}
-.done{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;height:34px;padding:0 18px;font:inherit;font-weight:700}
+.done{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;height:36px;padding:0 18px;
+  font:inherit;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -12px var(--accent)}
+.done:active{transform:scale(.96)}
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 14px calc(20px + env(safe-area-inset-bottom))}
 .group{padding:10px 0;display:flex;flex-direction:column;gap:9px}
 .group+.group{border-top:1px solid var(--line)}
 .group h3{margin:0;font-size:13px;font-weight:600;color:var(--muted)}
 .row{display:flex;gap:8px}
 .col{display:flex;flex-direction:column;gap:8px}
-.btn{flex:1;min-height:var(--tap);padding:0 12px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);font:inherit;font-size:14px;font-weight:600;position:relative;overflow:hidden;text-align:center;transition:transform .12s ease}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn{flex:1;min-height:var(--tap);padding:0 14px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--r2);border:0;background:var(--fill);color:var(--ink);font:inherit;font-size:14.5px;
+  font-weight:600;letter-spacing:-.15px;position:relative;overflow:hidden;text-align:center;
+  box-shadow:inset 0 1px 0 var(--fill-hi);transition:transform .16s var(--press),background .16s ease}
+.btn.primary{background:var(--accent);color:var(--accent-ink);font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -14px var(--accent)}
+.btn.danger{background:rgba(255,122,98,.13);box-shadow:inset 0 1px 0 rgba(255,122,98,.18)}
 .btn.big{min-height:58px;font-size:15.5px}
 .btn.danger{color:var(--danger)}
-.btn:active,.chip:active,.tpl:active{transform:scale(.97)}
+.btn:active,.act:active{transform:scale(.975);background:#2b3432}
+.btn.primary:active,.act.primary:active{background:#c8e343}
+.chip:active,.tpl:active,.card:active,.thumb:active{transform:scale(.96)}
 .file{position:absolute;inset:0;opacity:0;width:100%;height:100%}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .chips::-webkit-scrollbar,.tpls::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font:inherit;font-size:13.5px;color:var(--ink)}
-.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
-.sw{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);padding:0}
+.chip{flex:0 0 auto;height:40px;padding:0 17px;border-radius:999px;border:0;background:var(--fill);
+  box-shadow:inset 0 1px 0 var(--fill-hi);font:inherit;font-size:13.5px;font-weight:500;color:var(--ink);
+  transition:transform .16s var(--press),background .16s ease}
+.chip.on{background:var(--accent);color:var(--accent-ink);font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.sw{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:0;padding:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
 .sw.on{outline:2px solid var(--accent);outline-offset:2px}
 .sl{display:grid;grid-template-columns:84px 1fr 44px;gap:10px;align-items:center;font-size:14px}
 .sl output{text-align:right;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
@@ -71,7 +85,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .tpl.on canvas{border-color:var(--accent)}
 .tpl.on span{color:var(--ink);font-weight:600}
 .lib{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.thumb{position:relative;padding:0;border:2px solid transparent;border-radius:12px;overflow:hidden;background:var(--bg2);aspect-ratio:1}
+.thumb{position:relative;padding:0;border:2px solid transparent;border-radius:var(--r2);overflow:hidden;background:var(--bg2);aspect-ratio:1;transition:transform .16s var(--press)}
 .thumb canvas{width:100%;height:100%;display:block}
 .thumb.on{border-color:var(--accent)}
 .badge{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:1px 5px;border-radius:6px}
@@ -107,15 +121,23 @@ header button:disabled{opacity:.3;pointer-events:none}
 .card b{font-size:14.5px;letter-spacing:-.2px;text-align:left;padding-left:2px}
 .card span{color:var(--muted);font-size:11.5px;text-align:left;line-height:1.35;padding-left:2px}
 .hdr-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto;overflow:hidden;margin-right:auto}
-.back{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--chip);color:var(--ink);font-size:19px;flex:none}
+.back{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.055);color:var(--ink);
+  font-size:19px;flex:none;transition:background .16s ease}
+.back:active{background:rgba(255,255,255,.13)}
 #hdr h1{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
 header .tools{display:flex;gap:5px;align-items:center;flex:none}
 header .tools button{width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.055);color:var(--muted);font-size:14px;padding:0;flex:none;transition:background .15s}
 header .tools button:active{background:rgba(255,255,255,.12)}
-.export{height:36px!important;width:auto!important;padding:0 17px!important;font-size:13.5px;border-radius:999px;
-  background:var(--accent)!important;color:var(--accent-ink)!important;font-weight:700;letter-spacing:-.2px;
-  white-space:nowrap;flex:none;margin-left:4px;box-shadow:0 8px 20px -10px var(--accent)}
-.export:active{transform:scale(.96)}
+.export{width:40px!important;height:40px!important;padding:0!important;border-radius:50%;border:0;flex:none;
+  background:var(--accent)!important;color:var(--accent-ink)!important;margin-left:5px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 20px -10px var(--accent);
+  transition:transform .16s var(--press),box-shadow .16s ease}
+.export svg{width:20px;height:20px;fill:none;stroke:var(--accent-ink);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.export:active{transform:scale(.92)}
+.export:disabled{background:rgba(255,255,255,.055)!important;box-shadow:none}
+.export:disabled svg{stroke:var(--muted)}
 .dayline{display:flex;gap:8px;align-items:center;overflow-x:auto;padding-bottom:2px}
 .dayline::-webkit-scrollbar{display:none}
 .daybtn{flex:0 0 auto;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font:inherit;font-size:14px;font-weight:600;color:var(--ink);position:relative;overflow:hidden;padding:0}
@@ -142,9 +164,13 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 @keyframes sh{to{background-position:-200% 0}}
 .trimRow{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin:8px 2px 2px;font-variant-numeric:tabular-nums}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.act{min-height:64px;border-radius:var(--r3);border:1px solid var(--line);background:var(--chip);font:inherit;font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;transition:transform .12s ease}
-.act:active{transform:scale(.97)}
-.act.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.act{min-height:66px;border-radius:var(--r3);border:0;background:var(--fill);font:inherit;font-size:15px;
+  font-weight:600;letter-spacing:-.15px;color:var(--ink);display:flex;align-items:center;justify-content:center;
+  gap:8px;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 var(--fill-hi);
+  transition:transform .16s var(--press),background .16s ease}
+
+.act.primary{background:var(--accent);color:var(--accent-ink);font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 26px -16px var(--accent)}
 .act.wide{grid-column:1 / -1}
 .lockbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
 .lockbar button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;height:34px;padding:0 14px;font:inherit;font-weight:700;flex:none}
@@ -167,6 +193,18 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 .ov-box p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
 .prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:6px}
 .prog i{display:block;height:100%;width:0;background:var(--accent)}
+.brand{display:flex;align-items:center;gap:12px;margin:26px 18px calc(6px + env(safe-area-inset-bottom));
+  padding:12px 14px;border-radius:var(--r3);background:rgba(255,255,255,.035);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);text-decoration:none;color:inherit;
+  transition:background .16s ease,transform .16s var(--press)}
+.brand:active{background:rgba(255,255,255,.07);transform:scale(.985)}
+.brand-mark{flex:none;width:40px;height:40px;border-radius:12px;background:#0C1424;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;letter-spacing:-.8px;
+  box-shadow:inset 0 0 0 1px rgba(216,242,75,.22)}
+.brand-txt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.brand-txt b{font-size:14px;font-weight:600;letter-spacing:-.2px}
+.brand-txt small{font-size:12.5px;color:var(--muted)}
+.brand-go{flex:none;color:var(--muted);font-size:15px}
 #drafts{margin:0 0 4px}
 #drafts h2{font-size:15px;margin:0 0 10px;padding:0 18px;opacity:.72;font-weight:600;letter-spacing:-.2px}
 .draft-blank{width:132px;height:235px;border-radius:16px;background:#1a1e1d;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset}
@@ -189,6 +227,11 @@ header .tools button:active{background:rgba(255,255,255,.12)}
   <p class="sub">Choisis un modèle pour commencer.</p>
   <div id="drafts" hidden></div>
   <div id="homeCards"></div>
+  <a class="brand" href="https://corentindeville.com" target="_blank" rel="noopener">
+    <span class="brand-mark" aria-hidden="true">CD</span>
+    <span class="brand-txt"><b>Une app CD&nbsp;Studio</b><small>corentindeville.com</small></span>
+    <span class="brand-go" aria-hidden="true">↗</span>
+  </a>
 </div>
 
 <header id="hdr">
@@ -197,7 +240,12 @@ header .tools button:active{background:rgba(255,255,255,.12)}
     <button id="btnUndo" aria-label="Annuler">↺</button>
     <button id="btnRedo" aria-label="Refaire">↻</button>
     <button id="btnZoom" aria-label="Agrandir l'aperçu">⤢</button>
-    <button class="export" id="btnExport">Export</button>
+    <button class="export" id="btnExport" aria-label="Exporter">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3.4v10.2M12 3.4l-3.4 3.4M12 3.4l3.4 3.4"/>
+        <path d="M5.6 12.6v5.2a2.2 2.2 0 0 0 2.2 2.2h8.4a2.2 2.2 0 0 0 2.2-2.2v-5.2"/>
+      </svg>
+    </button>
   </div>
 </header>
 
@@ -1790,6 +1838,10 @@ function buildHome(force){
   });
 }
 function openEditor(i){
+  /* Un modèle choisi depuis l'accueil démarre un montage neuf. Celui qui était
+     en cours a déjà été rangé : on le retrouve dans « Tes brouillons ». */
+  flushSave(true);
+  blankSlate();
   applyTemplate(i);
   $('hdrTitle').textContent = TPL[i].name;
   S.tab = 'media'; S.sel = -1;
@@ -1869,6 +1921,13 @@ const PANELS = {
       h('div', {class:'row'}, btn('Tout remettre à zéro', () => { clearCovers(); toast('Couvertures d’origine rétablies', 2000); })),
       h('p', {class:'hint'}, 'Mets ton montage, ou n’importe quelle image de ta galerie, en couverture de ce modèle sur l’écran d’accueil. Tout reste sur ton téléphone.')),
     section('Aide', h('div', {class:'row'}, btn('Comment ça marche', showHelp), btn('Mettre sur l’écran d’accueil', installHelp))),
+    section('À propos',
+      h('a', {class:'brand', href:'https://corentindeville.com', target:'_blank', rel:'noopener',
+        style:'margin:0'},
+        h('span', {class:'brand-mark'}, 'CD'),
+        h('span', {class:'brand-txt'}, h('b', {}, 'Une app CD Studio'), h('small', {}, 'corentindeville.com')),
+        h('span', {class:'brand-go'}, '↗')),
+      h('p', {class:'hint'}, 'Montage est fait par Corentin Devillé, vidéaste et monteur. Tes photos ne quittent jamais ton téléphone.')),
     section('Application', btn('Mettre sur l’écran d’accueil', installHelp),
       h('p', {class:'hint'}, 'Montage devient une icône sur ton téléphone et s’ouvre en plein écran.')),
     section(null, btn('Tout recommencer', () => {
@@ -3136,14 +3195,22 @@ $('btnZoom').onclick = () => {
 };
 /* Plus d'écran d'accueil imposé : l'aide reste accessible depuis l'onglet Réglages. */
 
-function resetAll(){
+/* Repartir d'une feuille blanche : plus aucun média, plus aucun cadre rempli,
+   et un nouveau brouillon. L'ancien reste rangé dans « Tes brouillons ». */
+function blankSlate(){
   S.lib.forEach(m => { if (m.kind === 'video'){ try { m.el.pause(); m.el.remove(); } catch(e){} } });
   S.lib = []; S.items = []; S.sel = -1; S.crop = false; S.drawPath = false;
   S.audio.id = null;
   docId = null; lastThumb = null; setCurrent(null).catch(() => {});
-  S.bg.media = null; S.bg2.media = null; S.split = false; S.vsplit = false;
+  S.bg.media = null; S.bg2.media = null; S.bg.color = null; S.bg2.color = null;
+  S.split = false; S.vsplit = false;
   HIST.past = []; HIST.future = [];
-  S.tab = 'media'; applyTemplate(0); buildSheet(); bgDirty = true; draw(); mark(); goHome();
+  S.tab = 'media';
+}
+function resetAll(){
+  flushSave(true);
+  blankSlate();
+  applyTemplate(0); buildSheet(); bgDirty = true; draw(); mark(); goHome();
   toast('Nouveau montage', 1500);
 }
 
