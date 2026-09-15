@@ -152,7 +152,8 @@ header .tools button:active{background:rgba(255,255,255,.12)}
   -webkit-user-select:none;user-select:none}
 #trimTop{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
   padding:calc(14px + env(safe-area-inset-top)) 14px 10px;overflow:hidden}
-#trimTop video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:var(--r3);background:#15171b;display:block}
+#trimTop .prevCv{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+  border-radius:var(--r3);background:#15171b;display:block}
 #trimBar{flex:0 0 auto;display:flex;align-items:center;gap:10px;
   padding:calc(10px + env(safe-area-inset-top)) 14px 4px}
 #trimBar b{flex:1;text-align:center;font-size:15px;font-weight:600;letter-spacing:-.2px}
@@ -165,7 +166,28 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 #trimTransport .side.r{text-align:right}
 #trimTransport .side b{color:var(--ink);font-size:16px;font-weight:650;letter-spacing:-.3px}
 .ruler{display:block;width:100%;height:16px;opacity:.5;margin-bottom:2px}
-.toolrow{display:flex;gap:4px;margin:10px 0 2px}
+.tl .head{display:none}   /* la tête fixe au centre la remplace */
+.tlWrap{position:relative}
+.tl{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;touch-action:pan-x;
+  padding:0 50%;-webkit-overflow-scrolling:touch}
+.tl::-webkit-scrollbar{display:none}
+.tl .stripBox{width:100%;flex:none}
+.tlHead{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;margin-left:-1px;
+  background:var(--accent);border-radius:2px;pointer-events:none;
+  box-shadow:0 0 10px -1px var(--accent)}
+.tlHead::before{content:'';position:absolute;left:-4px;top:-5px;width:10px;height:10px;
+  border-radius:50%;background:var(--accent)}
+.toolstrip{display:flex;align-items:center;gap:8px;overflow-x:auto;max-height:10vh;
+  padding:2px 2px 4px;margin-top:8px;-webkit-overflow-scrolling:touch}
+.toolstrip::-webkit-scrollbar{display:none}
+.tpill{flex:0 0 auto;height:40px;padding:0 16px;border-radius:999px;border:0;background:var(--fill);
+  color:var(--ink);font:inherit;font-size:13.5px;font-weight:500;white-space:nowrap;
+  display:flex;align-items:center;box-shadow:inset 0 1px 0 var(--fill-hi)}
+.tpill.on{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.tpill:active{transform:scale(.96)}
+.tslide{flex:0 0 130px;accent-color:var(--accent);height:40px}
+.tval{flex:0 0 auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.toolrow{display:flex;gap:4px;margin:8px 0 0}
 .toolrow button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
   min-height:58px;border:0;border-radius:var(--r2);background:transparent;color:var(--muted);
   font:inherit;font-size:11.5px;transition:color .16s ease,background .16s ease}
@@ -179,7 +201,7 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 #trimPanel .group{padding:6px 0;gap:8px}
 #trimPanel .group+.group{border-top:0}
 #trimPanel .tabs{margin:10px 0 2px}
-#trimPanel .hint{margin:8px 2px 0}
+#trimPanel .hint{display:none}
 .strip{display:flex;align-items:center;gap:8px;background:#0f1211;border-radius:var(--r2);padding:6px;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
 .strip .play{width:48px;height:48px;flex:none;border:0;border-radius:11px;background:var(--fill);color:var(--ink);font-size:16px}
 .stripBox{position:relative;flex:1;overflow:hidden;border-radius:8px;touch-action:none;height:76px}
@@ -2443,22 +2465,37 @@ function openTrim(it){
   $('trim').hidden = false;
   holdVideos = true;
   buildTrimUI();
-  if (TRIM.vid) TRIM.vid.play().catch(() => {});
+  try { m.el.currentTime = m.start || 0; } catch(e){}
+  m.el.play().catch(() => {});
 }
 function closeTrim(){
   if (TRIM.stopHead){ TRIM.stopHead(); TRIM.stopHead = null; }
   $('trim').hidden = true; $('trimTop').innerHTML = ''; TRIM.vid = null;
   holdVideos = false; TRIM.m = null; TRIM.item = null;
+  bgDirty = true;
   refresh();
 }
 function buildTrimUI(){
   const m = TRIM.m, dur = isFinite(m.el.duration) ? m.el.duration : 0;
   const D = Math.min(videoDuration(), dur || 1);
   const top = $('trimTop'); top.innerHTML = '';
-  const prev = h('video', {playsinline:true, muted:true, loop:true, autoplay:true});
-  prev.muted = true; prev.src = m.el.currentSrc || m.el.src;
-  prev.currentTime = m.start || 0;
-  TRIM.vid = prev; top.appendChild(prev);
+  /* Les moteurs de montage dans le navigateur posent tous la même règle :
+     l'aperçu et l'export partagent la même géométrie. Ici, l'aperçu montrait la
+     vidéo brute — pas le format story, pas les coins arrondis, pas la LUT.
+     Il montre désormais la composition elle-même, celle qui sera exportée.
+     Au passage, on n'ouvre plus un second lecteur vidéo : sur un fichier 4K
+     c'était un doublon coûteux. */
+  const prev = m.el;
+  TRIM.vid = prev;
+  try { prev.playbackRate = S.video.speed || 1; } catch(e){}
+  const pcv = h('canvas', {class:'prevCv'}), pctx = pcv.getContext('2d');
+  top.appendChild(pcv);
+  const hh = 540, pw = Math.round(hh*S.W/S.H/2)*2;
+  pcv.width = pw; pcv.height = hh;
+  const paintPrev = () => {
+    render();
+    pctx.drawImage(cv, 0, 0, pcv.width, pcv.height);
+  };
   const P = $('trimPanel'); P.innerHTML = '';
   const box = h('div', {class:'stripBox'});
   const cv2 = h('canvas', {width:960, height:152});
@@ -2468,7 +2505,11 @@ function buildTrimUI(){
   const play = h('button', {class:'play', 'aria-label':'Lecture'}, '▶');
   play.onclick = () => { if (prev.paused){ prev.play().catch(() => {}); play.textContent = '❚❚'; } else { prev.pause(); play.textContent = '▶'; } };
   const ruler = h('canvas', {class:'ruler', width:600, height:32});
-  const strip = h('div', {class:'strip'}, box);
+  /* Sur mobile, viser une tête de lecture large de deux pixels est impossible.
+     CapCut, Mimo et OpenCut règlent ça pareil : la tête ne bouge pas, elle reste
+     au centre, et c'est la bande qui défile sous elle. On fait pareil. */
+  const scroller = h('div', {class:'tl'}, box);
+  const strip = h('div', {class:'tlWrap'}, scroller, h('div', {class:'tlHead'}));
   const info = h('div', {class:'trimRow'}, h('span', {}, ''), h('span', {}, ''));
   const tPos = h('div', {class:'side'}, h('b', {}, '0,0 s'));
   const tDur = h('div', {class:'side r'}, '');
@@ -2502,18 +2543,39 @@ function buildTrimUI(){
     info.lastChild.textContent = fmtT(en - st) + ' gardées sur ' + fmtT(dur);
     tDur.textContent = fmtT(dur);
   };
+  let scrubbing = 0, syncingScroll = false;
   const moveHead = () => {
     if (!dur) return;
     head.style.left = clamp(prev.currentTime/dur, 0, 1)*100 + '%';
     tPos.firstChild.textContent = fmtT(prev.currentTime);
+    /* Quand la vidéo joue, c'est elle qui pousse la bande sous la tête. */
+    if (!scrubbing && !prev.paused){
+      const w = box.getBoundingClientRect().width;
+      syncingScroll = true;
+      scroller.scrollLeft = clamp(prev.currentTime/dur, 0, 1)*w;
+      requestAnimationFrame(() => { syncingScroll = false; });
+    }
   };
+  /* Faire défiler = se déplacer dans le temps. */
+  scroller.addEventListener('scroll', () => {
+    if (syncingScroll) return;
+    const w = box.getBoundingClientRect().width;
+    if (!w || !dur) return;
+    scrubbing = Date.now();
+    if (!prev.paused){ prev.pause(); play.textContent = '▶'; }
+    const t = clamp(scroller.scrollLeft/w, 0, 1)*dur;
+    try { prev.currentTime = t; } catch(e){}
+    tPos.firstChild.textContent = fmtT(t);
+    clearTimeout(scroller._t);
+    scroller._t = setTimeout(() => { scrubbing = 0; }, 200);
+  }, {passive:true});
   prev.addEventListener('timeupdate', () => {
     const st = m.start || 0;
     if (prev.currentTime > st + D || prev.currentTime < st - .05){ try { prev.currentTime = st; } catch(e){} }
     moveHead();
   });
   let headRAF;
-  const tick = () => { moveHead(); headRAF = requestAnimationFrame(tick); };
+  const tick = () => { moveHead(); paintPrev(); headRAF = requestAnimationFrame(tick); };
   tick();
   TRIM.stopHead = () => cancelAnimationFrame(headRAF);
   const MIN = .3;
@@ -2542,18 +2604,18 @@ function buildTrimUI(){
     if (live){ clearTimeout(seekT); seekT = setTimeout(commit, 120); }
     else commit();
   };
+  /* Toucher une poignée la saisit ; toucher ailleurs laisse la bande défiler. */
   box.addEventListener('pointerdown', e => {
-    box.setPointerCapture(e.pointerId);
     const r = box.getBoundingClientRect();
     const st = m.start || 0, en = endOf();
     const xl = st/dur*r.width, xr = en/dur*r.width, px = e.clientX - r.left;
-    const grab = 26;                       /* zone de préhension, au doigt */
-    let mode = 'M', off = px - xl;
-    if (Math.abs(px - xl) < grab) mode = 'L';
-    else if (Math.abs(px - xr) < grab) mode = 'R';
-    else if (px < xl || px > xr){ mode = 'M'; off = (en - st)/dur*r.width/2; }
-    TRIM.drag = {mode, off:off/r.width*dur};
-    apply(mode, e.clientX, TRIM.drag.off, true);
+    const grab = 28;
+    const mode = Math.abs(px - xl) < grab ? 'L' : Math.abs(px - xr) < grab ? 'R' : null;
+    if (!mode) return;
+    e.preventDefault();
+    box.setPointerCapture(e.pointerId);
+    TRIM.drag = {mode, off:0};
+    apply(mode, e.clientX, 0, true);
   });
   box.addEventListener('pointermove', e => {
     if (!e.buttons || !TRIM.drag) return;
@@ -2572,38 +2634,46 @@ function buildTrimUI(){
   /* La bande reste visible en permanence ; en dessous, les réglages changent
      selon l'onglet. C'est la disposition de tous les outils de montage. */
   const tools = h('div', {});
+  /* Les réglages tiennent sur une seule ligne qui défile latéralement : le
+     panneau du bas ne doit jamais manger l'aperçu. */
+  const pill = (label, onclick, on) =>
+    h('button', {class:'tpill' + (on ? ' on' : ''), onclick:e => { onclick(e); markSoon(); }}, label);
   const paintTools = () => {
     tools.innerHTML = '';
+    const strip2 = h('div', {class:'toolstrip'});
     if (TRIM.tab === 'Vitesse'){
-      tools.appendChild(section(null,
-        chips(['0,25×', '0,5×', '1×', '2×', '4×'],
-          k => Math.abs((S.video.speed || 1) - SPEEDS[k]) < .001,
-          k => { S.video.speed = SPEEDS[k];
-            S.lib.forEach(x => { if (x.kind === 'video'){ try { x.el.playbackRate = SPEEDS[k]; } catch(e){} } });
-            try { prev.playbackRate = SPEEDS[k]; } catch(e){}
-            paintTools(); sync(); draw(); }),
-        h('p', {class:'hint'}, 'Ralenti ou accéléré. La durée finale suit : à 2×, deux fois plus court.')));
+      ['0,25×', '0,5×', '1×', '2×', '4×'].forEach(k =>
+        strip2.appendChild(pill(k, () => {
+          S.video.speed = SPEEDS[k];
+          S.lib.forEach(x => { if (x.kind === 'video'){ try { x.el.playbackRate = SPEEDS[k]; } catch(e){} } });
+          try { prev.playbackRate = SPEEDS[k]; } catch(e){}
+          paintTools(); sync(); draw();
+        }, Math.abs((S.video.speed || 1) - SPEEDS[k]) < .001)));
     } else if (TRIM.tab === 'Couleur'){
-      tools.appendChild(section(null,
-        h('div', {class:'row'},
-          filePick(LUT.data ? 'Changer de LUT' : 'Charger une LUT .cube',
-            {accept:'.cube,.CUBE,text/plain'},
-            async fs => { if (await loadCube(fs[0])){ bgDirty = true; paintTools(); draw(); } }),
-          LUT.data ? btn('Retirer', () => { LUT.data = null; LUT.name = ''; paintTools(); draw(); }, 'btn danger') : null),
-        LUT.data ? slider('Intensité', 0, 1, .01, () => LUT.amount, v => { LUT.amount = v; draw(); }, pct) : null,
-        LUT.data ? compareBtn() : null,
-        h('p', {class:'hint'}, LUT.data ? 'LUT active : ' + LUT.name
-          : 'Charge un .cube de coloriste. Il reste sur ton téléphone.')));
+      strip2.appendChild(filePick(LUT.data ? 'Changer' : 'Charger une LUT',
+        {accept:'.cube,.CUBE,text/plain', cls:'tpill'},
+        async fs => { if (await loadCube(fs[0])){ bgDirty = true; paintTools(); draw(); } }));
+      if (LUT.data){
+        const sl = h('input', {type:'range', min:0, max:1, step:.01, value:LUT.amount, class:'tslide'});
+        const lab = h('span', {class:'tval'}, pct(LUT.amount));
+        sl.addEventListener('input', () => { LUT.amount = +sl.value; lab.textContent = pct(LUT.amount); draw(); });
+        strip2.appendChild(sl); strip2.appendChild(lab);
+        strip2.appendChild(pill('Original', () => {}, false, true));
+        const cmp = strip2.lastChild;
+        const on = e => { e.preventDefault(); LUT.bypass = true; cmp.classList.add('on'); };
+        const off = () => { LUT.bypass = false; cmp.classList.remove('on'); };
+        cmp.addEventListener('pointerdown', on);
+        ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => cmp.addEventListener(ev, off));
+        strip2.appendChild(pill('Retirer', () => { LUT.data = null; LUT.name = ''; paintTools(); draw(); }));
+      }
     } else if (TRIM.tab === 'Cadre'){
-      tools.appendChild(section(null,
-        h('div', {class:'row'}, btn('Recadrer à la main', () => { S.crop = true; closeTrim(); refresh(); }, 'btn primary')),
-        h('p', {class:'hint'}, 'Ferme cet écran et te laisse déplacer et agrandir l’image dans son cadre, avec les doigts.')));
+      strip2.appendChild(pill('Recadrer à la main', () => { S.crop = true; closeTrim(); refresh(); }, true));
     } else {
-      tools.appendChild(section(null,
-        h('div', {class:'row'}, btn('‹ −1 s', () => nudge(-1)), btn('+1 s ›', () => nudge(1))),
-        h('div', {class:'row'}, btn('Tout garder', () => { m.start = 0; m.end = dur; sync(); restart(); draw(); })),
-        h('p', {class:'hint'}, 'Tire les deux bords blancs pour le début et la fin. Glisse au milieu pour déplacer le passage sans changer sa durée.')));
+      strip2.appendChild(pill('‹ −1 s', () => nudge(-1)));
+      strip2.appendChild(pill('+1 s ›', () => nudge(1)));
+      strip2.appendChild(pill('Tout garder', () => { m.start = 0; m.end = dur; sync(); restart(); draw(); }));
     }
+    tools.appendChild(strip2);
   };
   const TOOLS = [['Découper', '⇥'], ['Vitesse', '⏱'], ['Couleur', '◑'], ['Cadre', '⤢']];
   const tabs = h('div', {class:'toolrow'});
@@ -2819,12 +2889,14 @@ function clipLen(m){
 }
 function maxStart(m){ return Math.max(0, (isFinite(m.el.duration) ? m.el.duration : 0) - 1); }
 function trimLoop(){
-  if (holdVideos) return;
   const D = videoDuration();
-  usedVideoMedia().forEach(m => {
+  /* Pendant la découpe on veut quand même la boucle, sur les bornes du clip. */
+  const list = TRIM.m ? [TRIM.m] : (holdVideos ? [] : [...usedVideoMedia()]);
+  list.forEach(m => {
     const st = m.start || 0, v = m.el;
     if (!isFinite(v.duration)) return;
-    if (v.currentTime > st + D + .05 || v.currentTime < st - .05){
+    const span = TRIM.m ? clipLen(m) : Math.min(D, clipLen(m));
+    if (v.currentTime > st + span + .05 || v.currentTime < st - .05){
       try { v.currentTime = st; } catch(e){}
     }
   });
