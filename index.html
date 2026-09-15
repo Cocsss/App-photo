@@ -458,7 +458,7 @@ const TPL = [
           {cx:.5, cy:.835, w:.945, ar:1.78, radius:14}]},
   {name:'Bandes', fmt:'9:16', bg:{color:'#111111', zoom:1}, film:{grain:.2, fade:.1, warm:0, torn:false},
    slots:[{cx:.5, cy:.1225, w:1, ar:2.29}, {cx:.5, cy:.372, w:1, ar:2.2},
-          {cx:.5, cy:.621, w:1, ar:2.32}, {cx:.5, cy:.872, w:1, ar:2.18}]},,,
+          {cx:.5, cy:.621, w:1, ar:2.32}, {cx:.5, cy:.872, w:1, ar:2.18}]},
   {name:'Planche contact', fmt:'9:16', bg:{color:'#141210', zoom:1}, film:{grain:.35, fade:.18, warm:.1, torn:false},
    slots:Array.from({length:12}, (_, i) => ({
      cx:.5 + ((i % 3) - 1)*.315, cy:.235 + Math.floor(i/3)*.19, w:.29, ar:1.35,
@@ -1775,7 +1775,7 @@ function buildHome(force){
   HOME_SECTIONS.forEach(([title, names]) => {
     const grid = h('div', {class:'cards'});
     names.forEach(nm => {
-      const i = TPL.findIndex(t => t.name === nm); if (i < 0) return;
+      const i = TPL.findIndex(t => t && t.name === nm); if (i < 0) return;
       const t = TPL[i];
       const saved = loadCover(nm) || BUILT_IN_COVERS[nm];
       let art;
