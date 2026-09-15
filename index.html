@@ -14,7 +14,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Montage</title>
 <style>
-:root{--bg:#0d100f;--bg2:#141918;--sheet:#171c1b;--ink:#f3f6f4;--muted:#96a3a0;--line:#2a3331;--chip:#202826;--accent:#d8f24b;--accent-ink:#161a10;--danger:#ff7a62}
+:root{--bg:#0b0e0d;--bg2:#141918;--sheet:#161b1a;--ink:#f4f7f5;--muted:#9aa7a4;--line:#28312f;--chip:#1e2624;--accent:#d8f24b;--accent-ink:#161a10;--danger:#ff7a62;
+  --r1:10px;--r2:14px;--r3:18px;--r4:26px;--tap:48px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;font-size:15px;overscroll-behavior:none}
@@ -24,15 +25,15 @@ body.big .stage{flex:1;align-items:center}
 button,label{touch-action:manipulation;cursor:pointer}
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 12px 8px;background:linear-gradient(180deg,var(--bg) 60%,transparent)}
 body{background:radial-gradient(120% 60% at 20% -10%, #1d2a24 0%, var(--bg) 60%)}
-h1{margin:0;font-size:21px;font-weight:700;letter-spacing:-.5px}
+h1{margin:0;font-size:21px;font-weight:650;letter-spacing:-.55px}
 .export{height:38px;padding:0 18px;border-radius:999px;border:0;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:700}
 .stage{flex:0 0 auto;display:flex;justify-content:center;padding:2px 16px 14px}
-.frame{border-radius:16px;overflow:hidden;box-shadow:0 26px 50px -22px #000,0 0 0 1px rgba(255,255,255,.07);background:#1a201f}
+.frame{border-radius:var(--r3);overflow:hidden;box-shadow:0 30px 60px -28px #000,0 0 0 1px rgba(255,255,255,.08);background:#1a201f}
 #cv{display:block;width:100%;height:100%;touch-action:none}
-.sheet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--sheet);border-radius:24px 24px 0 0;box-shadow:0 -18px 40px -24px #000,0 -1px 0 rgba(255,255,255,.05)}
+.sheet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--sheet);border-radius:var(--r4) var(--r4) 0 0;box-shadow:0 -1px 0 rgba(255,255,255,.07)}
 .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 2px;flex:none}
 .tabs{display:flex;margin:6px 14px 4px;padding:3px;background:var(--chip);border-radius:12px;flex:none}
-.tabs button{flex:1;height:34px;border:0;background:transparent;border-radius:9px;font:inherit;font-size:14px;font-weight:600;color:var(--muted)}
+.tabs button{flex:1;height:38px;border:0;background:transparent;border-radius:9px;font:inherit;font-size:14px;font-weight:600;color:var(--muted)}
 .tabs button.on{background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 12px -6px var(--accent)}
 .selhead{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 2px;flex:none}
 .selhead b{font-size:17px;letter-spacing:-.2px}
@@ -43,15 +44,15 @@ h1{margin:0;font-size:21px;font-weight:700;letter-spacing:-.5px}
 .group h3{margin:0;font-size:13px;font-weight:600;color:var(--muted)}
 .row{display:flex;gap:8px}
 .col{display:flex;flex-direction:column;gap:8px}
-.btn{flex:1;min-height:44px;padding:0 12px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);font:inherit;font-size:14px;font-weight:600;position:relative;overflow:hidden;text-align:center;transition:transform .12s ease}
+.btn{flex:1;min-height:var(--tap);padding:0 12px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);font:inherit;font-size:14px;font-weight:600;position:relative;overflow:hidden;text-align:center;transition:transform .12s ease}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
-.btn.big{min-height:54px;font-size:15px}
+.btn.big{min-height:58px;font-size:15.5px}
 .btn.danger{color:var(--danger)}
 .btn:active,.chip:active,.tpl:active{transform:scale(.97)}
 .file{position:absolute;inset:0;opacity:0;width:100%;height:100%}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .chips::-webkit-scrollbar,.tpls::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font:inherit;font-size:13.5px;color:var(--ink)}
+.chip{flex:0 0 auto;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font:inherit;font-size:13.5px;color:var(--ink)}
 .chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 .sw{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);padding:0}
 .sw.on{outline:2px solid var(--accent);outline-offset:2px}
@@ -74,17 +75,23 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-with
 .thumb canvas{width:100%;height:100%;display:block}
 .thumb.on{border-color:var(--accent)}
 .badge{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:1px 5px;border-radius:6px}
-.hint{margin:2px 0;color:var(--muted);font-size:13px;line-height:1.45}
+.hint{margin:2px 0;color:var(--muted);font-size:13.5px;line-height:1.5}
 .ta{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font:inherit;font-size:16px;resize:none;background:var(--bg2);color:var(--ink)}
 #load{position:fixed;inset:0;z-index:45;background:rgba(8,12,11,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--ink)}
 #load .spin{width:46px;height:46px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 #load p{margin:0;font-size:15px;font-weight:600}
 #load small{color:var(--muted);font-size:13px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top));z-index:40;max-width:calc(100% - 32px);background:var(--accent);color:var(--accent-ink);font-weight:600;padding:11px 18px;border-radius:999px;font-size:14px;line-height:1.35;text-align:center;box-shadow:0 14px 30px -12px #000}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top));z-index:40;
+  max-width:calc(100% - 40px);background:rgba(26,32,31,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--ink);font-weight:500;padding:12px 20px;border-radius:999px;font-size:14px;line-height:1.4;text-align:center;
+  border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 40px -16px #000;animation:toastIn .22s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px)}}
 .ov{position:fixed;inset:0;z-index:30;background:rgba(14,22,22,.92);display:flex;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom))}
 .ov-card{width:100%;max-width:440px;display:flex;flex-direction:column;gap:14px}
-header button:disabled{opacity:.35}
+header button:disabled{opacity:.3;pointer-events:none}
+.export:disabled{background:var(--chip);color:var(--muted)}
 #home{position:fixed;inset:0;z-index:20;background:radial-gradient(130% 55% at 15% -5%, #21302a 0%, var(--bg) 55%);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(20px + env(safe-area-inset-top)) 0 calc(28px + env(safe-area-inset-bottom))}
 #home h1{font-size:38px;margin:0 0 4px;letter-spacing:-1.4px;font-weight:800;padding:0 18px;background:linear-gradient(92deg,var(--ink) 30%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
 #home .sub{color:var(--muted);font-size:14.5px;margin:0 0 18px;padding:0 18px;line-height:1.45}
@@ -103,8 +110,12 @@ header button:disabled{opacity:.35}
 .back{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--chip);color:var(--ink);font-size:19px;flex:none}
 #hdr h1{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
 header .tools{display:flex;gap:5px;align-items:center;flex:none}
-header .tools button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--chip);color:var(--ink);font-size:13px;padding:0;flex:none}
-.export{height:32px;padding:0 14px;font-size:13px;background:var(--accent);color:var(--accent-ink);font-weight:700;letter-spacing:-.2px;white-space:nowrap;flex:none}
+header .tools button{width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.055);color:var(--muted);font-size:14px;padding:0;flex:none;transition:background .15s}
+header .tools button:active{background:rgba(255,255,255,.12)}
+.export{height:36px!important;width:auto!important;padding:0 17px!important;font-size:13.5px;border-radius:999px;
+  background:var(--accent)!important;color:var(--accent-ink)!important;font-weight:700;letter-spacing:-.2px;
+  white-space:nowrap;flex:none;margin-left:4px;box-shadow:0 8px 20px -10px var(--accent)}
+.export:active{transform:scale(.96)}
 .dayline{display:flex;gap:8px;align-items:center;overflow-x:auto;padding-bottom:2px}
 .dayline::-webkit-scrollbar{display:none}
 .daybtn{flex:0 0 auto;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font:inherit;font-size:14px;font-weight:600;color:var(--ink);position:relative;overflow:hidden;padding:0}
@@ -131,7 +142,7 @@ header .tools button{width:30px;height:30px;border-radius:50%;border:1px solid v
 @keyframes sh{to{background-position:-200% 0}}
 .trimRow{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin:8px 2px 2px;font-variant-numeric:tabular-nums}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.act{min-height:60px;border-radius:16px;border:1px solid var(--line);background:var(--chip);font:inherit;font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;transition:transform .12s ease}
+.act{min-height:64px;border-radius:var(--r3);border:1px solid var(--line);background:var(--chip);font:inherit;font-size:15px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;transition:transform .12s ease}
 .act:active{transform:scale(.97)}
 .act.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 .act.wide{grid-column:1 / -1}
@@ -151,9 +162,9 @@ header .tools button{width:30px;height:30px;border-radius:50%;border:1px solid v
 #cutBusy{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(16,32,29,.6);color:#fff;font-size:15px}
 .ov-media{display:block;max-width:100%;max-height:62vh;margin:0 auto;border-radius:8px;-webkit-touch-callout:default}
 .ov-note{color:#c9d3d1;text-align:center;font-size:14px;margin:10px 0 0}
-.ov-box{background:var(--sheet);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:8px}
-.ov-box b{font-size:17px}
-.ov-box p{margin:0;color:var(--muted);font-size:14px}
+.ov-box{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r4);padding:22px;display:flex;flex-direction:column;gap:8px}
+.ov-box b{font-size:18px;letter-spacing:-.3px}
+.ov-box p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
 .prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:6px}
 .prog i{display:block;height:100%;width:0;background:var(--accent)}
 #drafts{margin:0 0 4px}
@@ -221,7 +232,14 @@ header .tools button{width:30px;height:30px;border-radius:50%;border:1px solid v
 window.addEventListener('error', e => {
   const b = document.getElementById('boot');
   if (b && !b.hidden) document.getElementById('bootMsg').textContent = 'Erreur : ' + e.message;
-  else { const t = document.getElementById('toast'); if (t){ t.textContent = 'Erreur : ' + e.message; t.hidden = false; } }
+  else {
+    /* L'utilisateur n'a rien à faire d'un TypeError. On dit ce qui est arrivé
+       et on le rassure : son montage est sauvegardé. */
+    const t = document.getElementById('toast');
+    if (t){ t.textContent = 'Un petit couac. Ton montage est gardé, tu peux continuer.'; t.hidden = false;
+      clearTimeout(window.__errT); window.__errT = setTimeout(() => { t.hidden = true; }, 4000); }
+    if (window.console) console.error(e.message);
+  }
 });
 </script>
 <script>
@@ -440,31 +458,7 @@ const TPL = [
           {cx:.5, cy:.835, w:.945, ar:1.78, radius:14}]},
   {name:'Bandes', fmt:'9:16', bg:{color:'#111111', zoom:1}, film:{grain:.2, fade:.1, warm:0, torn:false},
    slots:[{cx:.5, cy:.1225, w:1, ar:2.29}, {cx:.5, cy:.372, w:1, ar:2.2},
-          {cx:.5, cy:.621, w:1, ar:2.32}, {cx:.5, cy:.872, w:1, ar:2.18}]},
-  {name:'Bureau', fmt:'9:16', bg:{zoom:1.15}, film:{grain:.12, fade:.06, warm:0, torn:false},
-   decos:[{shape:'bar', color:'#f2f2f4', label:'Finder', cx:.5, cy:.055, w:.94, hr:.075},
-          {shape:'folder', color:'#4aa8f0', label:'Voyage', cx:.155, cy:.175, w:.17, hr:.8},
-          {shape:'folder', color:'#4aa8f0', label:'À trier', cx:.155, cy:.315, w:.17, hr:.8},
-          {shape:'folder', color:'#f0b24a', label:'Favoris', cx:.155, cy:.455, w:.17, hr:.8},
-          {shape:'file', color:'#ffffff', label:'notes.txt', cx:.84, cy:.79, w:.135, hr:1.2},
-          {shape:'file', color:'#ffffff', label:'Corbeille', cx:.84, cy:.915, w:.135, hr:1.2}],
-   slots:[{cx:.46, cy:.3, w:.3, ar:1.25, border:5, shadow:.5, bcolor:'#ffffff', num:'photo 1.png'},
-          {cx:.68, cy:.44, w:.27, ar:1.1, border:5, shadow:.5, bcolor:'#ffffff', num:'photo 2.png'},
-          {cx:.48, cy:.62, w:.42, ar:1.3, border:5, shadow:.55, bcolor:'#ffffff', num:'photo 3.png'}],
-   texts:[{text:'Mon archive', cx:.16, cy:.945, size:.024, font:'Gras', color:'#ffffff', spacing:.02}]},
-  {name:'Séquence', fmt:'9:16', bg:{color:'#0a0a0a', zoom:1}, film:{grain:.25, fade:.12, warm:0, torn:false},
-   slots:[{cx:.5, cy:.171, w:.945, ar:1.75, radius:14},
-          {cx:.5, cy:.505, w:.945, ar:1.63, radius:34},
-          {cx:.5, cy:.835, w:.945, ar:1.78, radius:14}]},
-  {name:'Bandes', fmt:'9:16', bg:{color:'#111111', zoom:1}, film:{grain:.2, fade:.1, warm:0, torn:false},
-   slots:[{cx:.5, cy:.1225, w:1, ar:2.29}, {cx:.5, cy:.372, w:1, ar:2.2},
-          {cx:.5, cy:.621, w:1, ar:2.32}, {cx:.5, cy:.872, w:1, ar:2.18}]},
-  {name:'Bureau', fmt:'9:16', bg:{zoom:1.15}, film:{grain:.15, fade:.08, warm:0, torn:false},
-   slots:[{cx:.4, cy:.33, w:.235, ar:1.22, border:5, shadow:.55, bcolor:'#ffffff', num:'place 3.png'},
-          {cx:.675, cy:.412, w:.215, ar:1.13, border:5, shadow:.55, bcolor:'#ffffff', num:'place.png'},
-          {cx:.41, cy:.575, w:.39, ar:1.31, border:5, shadow:.55, bcolor:'#ffffff', num:'place 2.png'}],
-   texts:[{text:'Moment archive', cx:.13, cy:.918, size:.022, font:'Gras', color:'#ffffff', spacing:.02},
-          {text:'@toncompte', cx:.87, cy:.918, size:.02, font:'Moderne', color:'#ffffff', spacing:.02}]},
+          {cx:.5, cy:.621, w:1, ar:2.32}, {cx:.5, cy:.872, w:1, ar:2.18}]},,,
   {name:'Planche contact', fmt:'9:16', bg:{color:'#141210', zoom:1}, film:{grain:.35, fade:.18, warm:.1, torn:false},
    slots:Array.from({length:12}, (_, i) => ({
      cx:.5 + ((i % 3) - 1)*.315, cy:.235 + Math.floor(i/3)*.19, w:.29, ar:1.35,
@@ -553,9 +547,7 @@ function h(tag, props = {}, ...kids){
    ~30 Mo par image. 1600 px suffit largement pour un export en 1080. */
 function toCanvasImg(src, nw, nh){
   const r = Math.min(1, 1600/Math.max(nw, nh));
-  const c = document.createElement('canvas');
-  c.width = Math.max(1, Math.round(nw*r)); c.height = Math.max(1, Math.round(nh*r));
-  const x = c.getContext('2d'); x.imageSmoothingQuality = 'high';
+  const [c, x] = offscreen(nw*r, nh*r);
   x.drawImage(src, 0, 0, c.width, c.height);
   return c;
 }
@@ -614,9 +606,16 @@ function loadVideo(file){
 }
 function isVideoFile(f){ return (f.type || '').startsWith('video') || /\.(mov|mp4|m4v|webm|3gp|hevc|avi|mkv)$/i.test(f.name || ''); }
 function isHeic(f){ return /heic|heif/i.test(f.type || '') || /\.(heic|heif)$/i.test(f.name || ''); }
+/* Un canvas hors écran prêt à dessiner, en une ligne. */
+function offscreen(w, hh, opts){
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(hh));
+  const x = c.getContext('2d', opts);
+  x.imageSmoothingQuality = 'high';
+  return [c, x];
+}
 function makeThumb(m){
-  const c = document.createElement('canvas'); c.width = c.height = 160;
-  const x = c.getContext('2d'), s = Math.max(160/m.w, 160/m.h);
+  const [c, x] = offscreen(160, 160), s = Math.max(160/m.w, 160/m.h);
   x.fillStyle = '#c9d3d1'; x.fillRect(0, 0, 160, 160);
   try { x.drawImage(m.el, (160 - m.w*s)/2, (160 - m.h*s)/2, m.w*s, m.h*s); } catch(e){}
   return c;
@@ -669,23 +668,29 @@ function newDeco(o){
   return Object.assign({type:'deco', shape:'rect', color:'#e3a92f', w:S.W*.5, hr:.3, radius:0, rot:0, x:S.W/2, y:S.H/2, label:''}, o);
 }
 function sfFont(size, weight){ return (weight || 500) + ' ' + Math.round(size) + 'px -apple-system,"SF Pro Text","Helvetica Neue",Inter,Arial,sans-serif'; }
+/* L'étiquette façon Finder : pastille bleue quand elle est sélectionnée,
+   texte blanc ombré sinon. Servait au nom des dossiers et au numéro des cadres. */
+function iosLabel(c, text, y, size, selected, color){
+  if (selected){
+    const tw = c.measureText(text).width;
+    c.fillStyle = 'rgba(10,132,255,.9)';
+    rr(c, -tw/2 - size*.36, y - size*.16, tw + size*.72, size*1.18, size*.3); c.fill();
+    c.fillStyle = '#ffffff'; c.fillText(text, 0, y);
+    return;
+  }
+  c.save();
+  c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = size*.32; c.shadowOffsetY = size*.06;
+  c.fillStyle = color || '#ffffff';
+  c.fillText(text, 0, y);
+  c.restore();
+}
 function decoLabel(c, it, w, hh){
   if (!it.label) return;
   const size = Math.max(11, w*.155);
   c.font = sfFont(size, 500);
   c.textAlign = 'center'; c.textBaseline = 'top';
-  String(it.label).split('\n').forEach((ln, i) => {
-    const y = hh/2 + size*.5 + i*size*1.2, tw = c.measureText(ln).width;
-    if (it.sel){
-      c.fillStyle = 'rgba(10,132,255,.9)';
-      rr(c, -tw/2 - size*.36, y - size*.16, tw + size*.72, size*1.18, size*.3); c.fill();
-      c.fillStyle = '#ffffff';
-    } else {
-      c.save(); c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = size*.32; c.shadowOffsetY = size*.06;
-      c.fillStyle = '#ffffff'; c.fillText(ln, 0, y); c.restore(); return;
-    }
-    c.fillText(ln, 0, y);
-  });
+  String(it.label).split('\n').forEach((ln, i) =>
+    iosLabel(c, ln, hh/2 + size*.5 + i*size*1.2, size, it.sel));
 }
 function drawFolder(c, it, W2, H2){
   const base = it.color || '#5ab4f0', r = H2*.13;
@@ -877,6 +882,9 @@ function placeMedia(list){
   autoBg();
 }
 
+/* L'état neutre d'un fond. Il était recopié mot pour mot à trois endroits
+   d'applyTemplate, avec le risque d'en oublier un en cas d'ajout. */
+const bgReset = z => ({zoom:z, rot:0, flip:false, blur:0, dim:0, x:0, y:0, bw:false, color:null});
 function applyTemplate(idx){
   const t = TPL[idx]; S.tpl = idx; S.sel = -1; S.crop = false;
   if (t.free){ S.items = S.items.filter(i => i.type !== 'media' || i.media); draw(); return; }
@@ -887,8 +895,8 @@ function applyTemplate(idx){
   if (t.split){
     const order = [S.bg.media, S.bg2.media, ...pool].filter(Boolean).filter((m, i, a) => a.indexOf(m) === i);
     S.split = true; S.vsplit = !!t.vsplit; S.ratio = t.split; S.bgEdit = 'top';
-    Object.assign(S.bg, {zoom:1, rot:0, flip:false, blur:0, dim:0, x:0, y:0, bw:false, color:null}, t.bg, {media:order[0] || null});
-    Object.assign(S.bg2, {zoom:1, rot:0, flip:false, blur:0, dim:0, x:0, y:0, bw:false, color:null}, t.bg2, {media:order[1] || null});
+    Object.assign(S.bg, bgReset(1), t.bg, {media:order[0] || null});
+    Object.assign(S.bg2, bgReset(1), t.bg2, {media:order[1] || null});
     pool = order.slice(2);
   } else {
     S.split = false; S.vsplit = false;
@@ -902,7 +910,7 @@ function applyTemplate(idx){
   (t.texts || []).forEach(tx => S.items.push(newTextItem({text:tx.text, x:tx.cx*W, y:tx.cy*H, size:tx.size*W, font:tx.font, color:tx.color, spacing:tx.spacing, lh:tx.lh || 1.25, align:tx.align || 'center', shadow:tx.shadow !== false})));
   (t.decos || []).forEach(dd => S.items[dd.back ? 'unshift' : 'push'](newDeco({shape:dd.shape || 'rect', color:dd.color, label:dd.label || '', w:dd.w*W, hr:dd.hr, radius:(dd.radius || 0)*W, rot:(dd.rot || 0)*Math.PI/180, x:dd.cx*W, y:dd.cy*H})));
   (t.paths || []).forEach(pp => S.items.push(newPathItem({preset:pp.preset})));
-  if (!t.split) Object.assign(S.bg, {zoom:1.2, rot:0, flip:false, blur:0, dim:0, x:0, y:0, bw:false, color:null}, t.bg);
+  if (!t.split) Object.assign(S.bg, bgReset(1.2), t.bg);
   Object.assign(S.film, t.film);
   if (S.bg.color) S.bg.media = null;
   if (t.grid){ buildCalendar(false); pool.forEach(m => { const c = S.items.find(i => i.day && !i.media); if (c) c.media = m; }); }
@@ -1066,6 +1074,13 @@ function shade(hex, amt){
   const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => clamp(Math.round(v + amt), 0, 255));
   return 'rgb(' + ch.join(',') + ')';
 }
+/* Se placer dans le repère d'un élément (position + rotation) puis revenir.
+   C'était recopié à l'identique dans sept fonctions de dessin. */
+function inFrame(c, it, paint){
+  c.save(); c.translate(it.x, it.y); c.rotate(it.rot);
+  paint();
+  c.restore();
+}
 function drawMediaItem(c, it){
   if (it.swap) return drawSwapItem(c, it);
   if (!it.media && exporting && !it.outline) return;
@@ -1203,19 +1218,7 @@ function slotNum(c, it, f){
   const size = clamp(f.fw*.088, 10, S.W*.026);
   c.font = sfFont(size, 500);
   c.textAlign = 'center'; c.textBaseline = 'top';
-  const y = f.oh/2 - f.shift + size*.5;
-  if (it.numSel){
-    const tw = c.measureText(it.num).width;
-    c.fillStyle = 'rgba(10,132,255,.9)';
-    rr(c, -tw/2 - size*.36, y - size*.16, tw + size*.72, size*1.18, size*.3); c.fill();
-    c.fillStyle = '#ffffff'; c.fillText(it.num, 0, y);
-    return;
-  }
-  c.save();
-  c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = size*.32; c.shadowOffsetY = size*.06;
-  c.fillStyle = it.numColor || '#ffffff';
-  c.fillText(it.num, 0, y);
-  c.restore();
+  iosLabel(c, it.num, f.oh/2 - f.shift + size*.5, size, it.numSel, it.numColor);
 }
 function dayNum(c, it, f){
   if (!it.day || !S.cal.nums) return;
@@ -1320,9 +1323,16 @@ function film(c, anim, low){
   }
   c.globalCompositeOperation = 'source-over';
 }
+/* Recalculé jusqu'à quatre fois par image dessinée. Le résultat ne peut pas
+   changer pendant un rendu : on le garde le temps d'une image. */
+let usedCache = null;
 function usedMedia(){
-  const s = new Set(); if (S.bg.media) s.add(S.bg.media); if (S.split && S.bg2.media) s.add(S.bg2.media);
-  S.items.forEach(i => i.media && s.add(i.media)); return s;
+  if (usedCache) return usedCache;
+  const s = new Set();
+  if (S.bg.media) s.add(S.bg.media);
+  if (S.split && S.bg2.media) s.add(S.bg2.media);
+  S.items.forEach(i => i.media && s.add(i.media));
+  return s;
 }
 function usesVideo(){ for (const m of usedMedia()) if (m.kind === 'video') return true; return false; }
 function syncVideos(){
@@ -1334,7 +1344,13 @@ function syncVideos(){
     else if (!m.el.paused) m.el.pause();
   });
 }
+/* Enveloppe : le cache des médias utilisés vaut pour toute la durée d'une
+   image, et il est relâché même si le dessin échoue. */
 function render(){
+  usedCache = usedMedia();
+  try { paintFrame(); } finally { usedCache = null; }
+}
+function paintFrame(){
   syncVideos(); trimLoop();
   const {W, H} = S, anim = usesVideo();
   if (bgDirty || (S.bg.media && S.bg.media.kind === 'video') || (S.split && S.bg2.media && S.bg2.media.kind === 'video')) renderBg();
@@ -1357,8 +1373,6 @@ function render(){
   }
 }
 let rafOn = false;
-window.__render = () => render();
-window.__S = S;
 function draw(){ if (!rafOn){ rafOn = true; requestAnimationFrame(frame); } }
 let lastFrameT = -1e9;
 function frame(ts){
@@ -1458,6 +1472,9 @@ cv.addEventListener('pointermove', e => {
   const pt = toCv(e); pointers.set(e.pointerId, pt);
   const it = S.items[S.sel];
   if (pointers.size === 1){
+    /* Geste sans point de départ : cadre verrouillé par le modèle, ou doigt
+       relevé au milieu d'un pincement. Rien à déplacer. */
+    if (!G.s) return;
     const dx = pt.x - G.s.x, dy = pt.y - G.s.y;
     if (G.t === 'bg'){ G.P.x = G.o.x + dx; G.P.y = G.o.y + dy; bgDirty = true; }
     else if (G.t === 'move' && it){ it.x = G.o.x + dx; it.y = G.o.y + dy; }
@@ -1560,8 +1577,7 @@ function demoPhoto(i){
   const k = i % DEMO_SCENES.length;
   if (demoCache[k]) return demoCache[k];
   const S1 = DEMO_SCENES[k], W2 = 180, H2 = 240;
-  const c = document.createElement('canvas'); c.width = W2; c.height = H2;
-  const x = c.getContext('2d');
+  const [c, x] = offscreen(W2, H2);
   let sd = k*97 + 13; const rnd = () => (sd = (sd*16807) % 2147483647)/2147483647;
   const g = x.createLinearGradient(0, 0, 0, H2*.72);
   g.addColorStop(0, S1.sky[0]); g.addColorStop(1, S1.sky[1]);
@@ -1725,10 +1741,8 @@ function clearCovers(){
   homeBuilt = false; buildHome(true);
 }
 function coverFromCanvas(){
-  const tw = 240, th = Math.round(tw*S.H/S.W);
-  const c = document.createElement('canvas'); c.width = tw; c.height = th;
-  const x = c.getContext('2d'); x.imageSmoothingQuality = 'high';
-  x.drawImage(cv, 0, 0, tw, th);
+  const tw = 240, [c, x] = offscreen(tw, Math.round(tw*S.H/S.W));
+  x.drawImage(cv, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', .72);
 }
 function setCover(){
@@ -1746,8 +1760,7 @@ async function setCoverFromFile(file){
   const name = TPL[S.tpl] && TPL[S.tpl].name; if (!name) return;
   const [W2, H2] = FORMATS[TPL[S.tpl].fmt || '9:16'];
   const tw = 240, th = Math.round(tw*H2/W2);
-  const c = document.createElement('canvas'); c.width = tw; c.height = th;
-  const x = c.getContext('2d'); x.imageSmoothingQuality = 'high';
+  const [c, x] = offscreen(tw, th);
   const sc = Math.max(tw/m.w, th/m.h);
   x.drawImage(m.el, (tw - m.w*sc)/2, (th - m.h*sc)/2, m.w*sc, m.h*sc);
   homeBuilt = false;
@@ -1782,19 +1795,18 @@ function openEditor(i){
   S.tab = 'media'; S.sel = -1;
   $('home').hidden = true;
   buildSheet(); layout(); draw();
-  if (!S.lib.length) toast('Ajoute tes photos dans l’onglet Photos.', 3000);
+
 }
+/* Repeindre le panneau et l'aperçu : le geste le plus fréquent de l'app. */
+function refresh(){ buildSheet(); draw(); }
 function goHome(){ S.sel = -1; S.crop = false; flushSave(true); buildSheet(); $('home').hidden = false; buildHome(); buildDrafts(); }
 
 const PANELS = {
   media: () => h('div', {},
-    isCal() ? section('Calendrier', h('div', {class:'dayline'}, ...S.items.filter(x => x.day).map(cell => {
-      const b = h('button', {class:'daybtn', onclick:() => { S.sel = S.items.indexOf(cell); buildSheet(); draw(); }}, h('i', {}, String(cell.day)));
-      if (cell.media){ b.classList.add('filled'); const c = h('canvas', {width:92, height:92}); c.getContext('2d').drawImage(cell.media.thumb, 0, 0, 92, 92); b.appendChild(c); }
-      return b;
-    })), h('p', {class:'hint'}, 'Touche un jour pour lui choisir une photo, un par un.')) : null,
+    isCal() ? section('Calendrier', dayLine(null, true),
+      h('p', {class:'hint'}, 'Touche un jour pour lui choisir une photo, un par un.')) : null,
     section(null, h('div', {class:'row'},
-      filePick(isCal() ? '+ Remplir les jours vides' : '+ Photos et vidéos', {multiple:true, cls:'btn primary'}, async fs => { const ms = await ingest(fs); if (ms.length){ placeMedia(ms); buildSheet(); draw(); mark(); } })),
+      filePick(isCal() ? '+ Remplir les jours vides' : '+ Photos et vidéos', {multiple:true, cls:'btn primary'}, async fs => { const ms = await ingest(fs); if (ms.length){ placeMedia(ms); refresh(); mark(); } })),
       h('div', {class:'row'}, btn('+ Texte', addText), btn('+ Chemin', addPath), btn('+ Forme', addDeco)),
       h('div', {class:'row'}, btn('Permuter les photos', shuffleMedia))),
     section(S.lib.length ? 'Touche pour ajouter au montage' : null, libGrid(m => { placeMedia([m]); draw(); toast('Ajouté', 1200); }))),
@@ -1816,18 +1828,18 @@ const PANELS = {
         S.split ? chips(['Séparation verticale'], () => S.vsplit, () => { S.vsplit = !S.vsplit; bgDirty = true; buildSheet(); }) : null,
         !P.media ? swatches(['#f7f7f5', '#15171b', '#24462b', '#1b3a5c', '#c9542a', '#e8dccb'], () => P.color || '#f7f7f5', c => { P.color = c; bgDirty = true; }) : null),
       section(null,
-        P.media ? btn('Fond uni', () => { P.media = null; P.color = P.color || '#f7f7f5'; bgDirty = true; buildSheet(); draw(); }) : null,
+        P.media ? btn('Fond uni', () => { P.media = null; P.color = P.color || '#f7f7f5'; bgDirty = true; refresh(); }) : null,
         chips(['Noir et blanc'], () => !!P.bw, () => { P.bw = !P.bw; bgDirty = true; })),
       h('p', {class:'hint'}, S.split ? "Glisse chaque moitié sur l'aperçu pour la recadrer, pince pour zoomer." : "Glisse le fond sur l'aperçu pour le recadrer, pince pour zoomer."));
   },
   style: () => h('div', {},
     isCal() ? section('Calendrier',
       h('div', {class:'row'},
-        btn('‹ Mois', () => { S.cal.m--; if (S.cal.m < 0){ S.cal.m = 11; S.cal.y--; } setSpan(S.cal.span); buildSheet(); draw(); }),
+        btn('‹ Mois', () => { S.cal.m--; if (S.cal.m < 0){ S.cal.m = 11; S.cal.y--; } setSpan(S.cal.span); refresh(); }),
         h('div', {class:'btn', style:'pointer-events:none'}, MONTHS[S.cal.m] + ' ' + S.cal.y),
-        btn('Mois ›', () => { S.cal.m++; if (S.cal.m > 11){ S.cal.m = 0; S.cal.y++; } setSpan(S.cal.span); buildSheet(); draw(); })),
+        btn('Mois ›', () => { S.cal.m++; if (S.cal.m > 11){ S.cal.m = 0; S.cal.y++; } setSpan(S.cal.span); refresh(); })),
       h('h3', {}, 'Durée'),
-      chips(Object.keys(SPANS), k => S.cal.span === k, k => { setSpan(k); buildSheet(); draw(); }),
+      chips(Object.keys(SPANS), k => S.cal.span === k, k => { setSpan(k); refresh(); }),
       S.cal.span !== 'Mois' ? slider('Premier jour', 1, daysInMonth(), 1, () => S.cal.from, setFrom, v => Math.round(v) + ' ' + MONTHS[S.cal.m].slice(0, 4)) : null,
       S.cal.span === 'Perso' ? slider('Dernier jour', 1, daysInMonth(), 1, () => S.cal.to, setTo, v => Math.round(v) + ' ' + MONTHS[S.cal.m].slice(0, 4)) : null,
       chips(['Commence Lun', 'Commence Dim'], k => (k === 'Commence Lun') === (S.cal.start === 'Lun'),
@@ -1865,25 +1877,33 @@ const PANELS = {
     }, 'btn danger')))
 };
 
-function fillItem(it, m){ it.media = m; it.pz = 1; it.px = it.py = 0; autoBg(); buildSheet(); draw(); }
+function fillItem(it, m){ it.media = m; it.pz = 1; it.px = it.py = 0; autoBg(); refresh(); }
 function actions(it){
   return section(null,
     h('div', {class:'row'},
-      btn('Dupliquer', () => { const c = Object.assign({}, it, {corners:it.corners ? [...it.corners] : undefined, x:it.x + S.W*.04, y:it.y + S.W*.04}); if (it.pts) c.pts = it.pts.map(q => ({x:q.x + S.W*.04, y:q.y + S.W*.04})); S.items.push(c); S.sel = S.items.length - 1; buildSheet(); draw(); }),
+      btn('Dupliquer', () => { const c = Object.assign({}, it, {corners:it.corners ? [...it.corners] : undefined, x:it.x + S.W*.04, y:it.y + S.W*.04}); if (it.pts) c.pts = it.pts.map(q => ({x:q.x + S.W*.04, y:q.y + S.W*.04})); S.items.push(c); S.sel = S.items.length - 1; refresh(); }),
       btn('Devant', () => { S.items.splice(S.sel, 1); S.items.push(it); S.sel = S.items.length - 1; draw(); }),
       btn('Derrière', () => { S.items.splice(S.sel, 1); S.items.unshift(it); S.sel = 0; draw(); })),
     h('div', {class:'row'},
       it.type === 'media' && it.media ? btn('Mettre en fond', () => { setBg(it.media); toast('Fond changé', 1200); }) : null,
-      it.day && it.media ? btn('Enlever la photo', () => { it.media = null; buildSheet(); draw(); }, 'btn danger')
+      it.day && it.media ? btn('Enlever la photo', () => { it.media = null; refresh(); }, 'btn danger')
         : it.day ? null
-        : btn('Supprimer', () => { S.items.splice(S.sel, 1); S.sel = -1; S.crop = false; buildSheet(); draw(); }, 'btn danger')));
+        : btn('Supprimer', () => { S.items.splice(S.sel, 1); S.sel = -1; S.crop = false; refresh(); }, 'btn danger')));
 }
-function dayLine(sel){
+/* La bande des jours du mois : construite à l'identique à trois endroits.
+   `sel` surligne le jour courant, `keepMode` conserve le panneau ouvert. */
+function dayLine(sel, keepMode){
   const line = h('div', {class:'dayline'});
   S.items.filter(x => x.day).forEach(cell => {
-    const b = h('button', {class:'daybtn' + (cell === sel ? ' on' : ''),
-      onclick:() => { S.sel = S.items.indexOf(cell); S.panelMode = 'actions'; buildSheet(); draw(); }}, h('i', {}, String(cell.day)));
-    if (cell.media){ b.classList.add('filled'); const c = h('canvas', {width:92, height:92}); c.getContext('2d').drawImage(cell.media.thumb, 0, 0, 92, 92); b.appendChild(c); }
+    const b = h('button', {class:'daybtn' + (sel && cell === sel ? ' on' : ''),
+      onclick:() => { S.sel = S.items.indexOf(cell); if (!keepMode) S.panelMode = 'actions'; refresh(); }},
+      h('i', {}, String(cell.day)));
+    if (cell.media){
+      b.classList.add('filled');
+      const c = h('canvas', {width:92, height:92});
+      c.getContext('2d').drawImage(cell.media.thumb, 0, 0, 92, 92);
+      b.appendChild(c);
+    }
     line.appendChild(b);
   });
   setTimeout(() => { const on = line.querySelector('.daybtn.on'); if (on) on.scrollIntoView({block:'nearest', inline:'center'}); }, 0);
@@ -1891,15 +1911,7 @@ function dayLine(sel){
 }
 function dayPanel(it){
   const g = calGeom(), wrap = h('div', {});
-  const line = h('div', {class:'dayline'});
-  S.items.filter(x => x.day).forEach(cell => {
-    const b = h('button', {class:'daybtn' + (cell === it ? ' on' : ''),
-      onclick:() => { S.sel = S.items.indexOf(cell); buildSheet(); draw(); }}, h('i', {}, String(cell.day)));
-    if (cell.media){ b.classList.add('filled'); const c = h('canvas', {width:92, height:92}); c.getContext('2d').drawImage(cell.media.thumb, 0, 0, 92, 92); b.appendChild(c); }
-    line.appendChild(b);
-  });
-  wrap.appendChild(section('Jours du mois', line));
-  setTimeout(() => { const on = line.querySelector('.daybtn.on'); if (on) on.scrollIntoView({block:'nearest', inline:'center'}); }, 0);
+  wrap.appendChild(section('Jours du mois', dayLine(it, true)));
   if (!it.media){
     wrap.appendChild(section(null,
       filePick('Choisir une photo pour ce jour', {cls:'btn primary big'}, async fs => { const ms = await ingest(fs); if (ms[0]) setDay(it, ms[0]); })));
@@ -1910,10 +1922,10 @@ function dayPanel(it){
     wrap.appendChild(section(null, c,
       h('div', {class:'row'},
         filePick('Remplacer', {}, async fs => { const ms = await ingest(fs); if (ms[0]) setDay(it, ms[0]); }),
-        h('button', {class:'btn' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; buildSheet(); draw(); }}, S.crop ? 'Recadrage activé' : 'Recadrer')),
+        h('button', {class:'btn' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; refresh(); }}, S.crop ? 'Recadrage activé' : 'Recadrer')),
       h('div', {class:'row'},
         btn('Noir et blanc', () => { it.bw = !it.bw; draw(); buildSheet(); }, 'btn' + (it.bw ? ' primary' : '')),
-        btn('Enlever la photo', () => { it.media = null; buildSheet(); draw(); }, 'btn danger')),
+        btn('Enlever la photo', () => { it.media = null; refresh(); }, 'btn danger')),
       S.crop ? h('p', {class:'hint'}, 'Glisse la photo dans la case, pince pour zoomer.') : null));
     wrap.appendChild(section(null, btn('Jour suivant ›', () => nextDay(it), 'btn primary big')));
   }
@@ -1923,7 +1935,7 @@ function dayPanel(it){
 function setDay(it, m){
   it.media = m; it.pz = 1; it.px = it.py = 0;
   autoBg();
-  buildSheet(); draw(); mark();
+  refresh(); mark();
   toast(it.day + ' ' + MONTHS[S.cal.m] + ' ajouté', 1400);
 }
 function nextDay(it){
@@ -1932,7 +1944,7 @@ function nextDay(it){
   const next = days.slice(from + 1).find(d => !d.media) || days.find(d => !d.media);
   if (!next){ toast('Tous les jours ont une photo.', 2000); S.sel = -1; }
   else S.sel = S.items.indexOf(next);
-  buildSheet(); draw();
+  refresh();
 }
 function actionsPanel(it){
   const wrap = h('div', {});
@@ -1944,33 +1956,35 @@ function actionsPanel(it){
   } else {
     const acts = h('div', {class:'acts'},
       isVid ? h('button', {class:'act primary wide', onclick:() => openTrim(it)}, '⏱  Recadrer le temps') : null,
-      h('button', {class:'act' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; buildSheet(); draw(); }}, S.crop ? 'Recadrage activé' : '⤢  Recadrer'),
+      h('button', {class:'act' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; refresh(); }}, S.crop ? 'Recadrage activé' : '⤢  Recadrer'),
       filePick('↺  Remplacer', {cls:'act'}, async fs => { const ms = await ingest(fs); if (ms[0]) fillItem(it, ms[0]); }),
       h('button', {class:'act', onclick:() => { S.panelMode = 'style'; buildSheet(); }}, '✎  Style'),
-      it.day ? h('button', {class:'act', onclick:() => { it.media = null; buildSheet(); draw(); }}, 'Enlever')
+      it.day ? h('button', {class:'act', onclick:() => { it.media = null; refresh(); }}, 'Enlever')
              : h('button', {class:'act', onclick:() => { S.panelMode = 'more'; buildSheet(); }}, '···  Plus'));
     wrap.appendChild(section(null, acts,
       S.crop ? h('p', {class:'hint'}, 'Glisse la photo dans le cadre, pince pour zoomer.') : null));
   }
   const lockRow = h('div', {class:'lockbar'},
-    h('span', {}, it.locked ? '🔒  Cadre verrouillé par le modèle' : '🔓  Cadre libre, tu peux le bouger'),
-    h('button', {onclick:() => { it.locked = !it.locked; buildSheet(); draw(); }}, it.locked ? 'Déverrouiller' : 'Verrouiller'));
+    h('span', {}, it.locked ? '🔒  Ce cadre reste en place' : '🔓  Ce cadre bouge librement'),
+    h('button', {onclick:() => { it.locked = !it.locked; refresh(); }}, it.locked ? 'Le libérer' : 'Le fixer'));
   wrap.appendChild(section(null, lockRow,
-    h('p', {class:'hint'}, it.locked ? 'Déverrouille pour le déplacer, l’agrandir ou le tourner avec les doigts.' : 'Un doigt pour déplacer, deux doigts pour agrandir ou tourner.')));
+    h('p', {class:'hint'}, it.locked
+      ? 'Le modèle le tient à sa place pour garder la mise en page propre. Libère-le si tu veux le déplacer toi-même.'
+      : 'Un doigt pour le déplacer, deux doigts pour l’agrandir ou le tourner.')));
   if (it.day) wrap.appendChild(section('Jours du mois', dayLine(it)));
   return wrap;
 }
 function morePanel(it){
   return h('div', {},
     section(null, h('div', {class:'row'},
-      btn('Dupliquer', () => { const c = Object.assign({}, it, {corners:it.corners ? [...it.corners] : undefined, locked:false, x:it.x + S.W*.04, y:it.y + S.W*.04}); S.items.push(c); S.sel = S.items.length - 1; S.panelMode = 'actions'; buildSheet(); draw(); }),
+      btn('Dupliquer', () => { const c = Object.assign({}, it, {corners:it.corners ? [...it.corners] : undefined, locked:false, x:it.x + S.W*.04, y:it.y + S.W*.04}); S.items.push(c); S.sel = S.items.length - 1; S.panelMode = 'actions'; refresh(); }),
       btn('Devant', () => { S.items.splice(S.sel, 1); S.items.push(it); S.sel = S.items.length - 1; draw(); }),
       btn('Derrière', () => { S.items.splice(S.sel, 1); S.items.unshift(it); S.sel = 0; draw(); }))),
     section(null, h('div', {class:'row'},
       it.media ? btn('Mettre en fond', () => { setBg(it.media); toast('Fond changé', 1200); }) : null,
       it.media ? btn('Détourer l’objet', () => openCutout(it)) : null)),
     section(null, h('div', {class:'row'},
-      btn('Supprimer', () => { S.items.splice(S.sel, 1); S.sel = -1; S.panelMode = 'actions'; buildSheet(); draw(); }, 'btn danger'),
+      btn('Supprimer', () => { S.items.splice(S.sel, 1); S.sel = -1; S.panelMode = 'actions'; refresh(); }, 'btn danger'),
       btn('Retour', () => { S.panelMode = 'actions'; buildSheet(); }))));
 }
 function mediaPanel(it){
@@ -1982,7 +1996,7 @@ function mediaPanel(it){
   } else {
     wrap.appendChild(section(null, h('div', {class:'row'},
       filePick('Remplacer', {}, async fs => { const ms = await ingest(fs); if (ms[0]) fillItem(it, ms[0]); }),
-      h('button', {class:'btn' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; buildSheet(); draw(); }}, S.crop ? 'Recadrage activé' : 'Recadrer')),
+      h('button', {class:'btn' + (S.crop ? ' primary' : ''), onclick:() => { S.crop = !S.crop; refresh(); }}, S.crop ? 'Recadrage activé' : 'Recadrer')),
       h('div', {class:'row'}, btn('Détourer l’objet', () => openCutout(it))),
       S.crop ? h('p', {class:'hint'}, 'Glisse pour déplacer la photo dans le cadre, pince pour zoomer dedans.') : null));
   }
@@ -1997,10 +2011,7 @@ function mediaPanel(it){
   wrap.appendChild(section('Format du cadre', chips(Object.keys(ARS), k => Math.abs((it.ar || 0) - ARS[k]) < 1e-3, k => it.ar = ARS[k])));
   wrap.appendChild(section('Réglages',
     slider('Taille', 6, 120, .5, () => it.w/S.W*100, v => it.w = S.W*v/100, v => Math.round(v) + '%'),
-    slider('Rotation', -45, 45, .5, () => it.rot*180/Math.PI, v => it.rot = v*Math.PI/180, v => Math.round(v) + '°'),
-    slider('Bordure', 0, 8, .1, () => it.border, v => it.border = v, v => v.toFixed(1)),
-    slider('Arrondi', 0, 80, 1, () => it.radius, v => it.radius = v, v => String(Math.round(v))),
-    slider('Ombre', 0, 1, .01, () => it.shadow, v => it.shadow = v, pct)));
+    ...edits(it, 'rot', 'border', 'radius', 'shadow')));
   wrap.appendChild(section('Couleur de bordure', chips(Object.keys(BORDER_COLORS), k => it.bcolor === BORDER_COLORS[k],
     k => { it.bcolor = BORDER_COLORS[k]; if (!it.border){ it.border = 1.5; syncSliders(); } })));
   wrap.appendChild(section('Effet de bord', chips(BSTYLES, k => (it.bstyle || 'Uni') === k,
@@ -2025,24 +2036,21 @@ function swapPanel(it){
     section('Format du cadre', chips(Object.keys(ARS).filter(k => k !== 'Original'), k => Math.abs((it.ar || 1) - ARS[k]) < 1e-3, k => it.ar = ARS[k])),
     section('Réglages',
       slider('Taille', 6, 90, .5, () => it.w/S.W*100, v => it.w = S.W*v/100, v => Math.round(v) + '%'),
-      slider('Rotation', -45, 45, .5, () => it.rot*180/Math.PI, v => it.rot = v*Math.PI/180, v => Math.round(v) + '°'),
-      slider('Bordure', 0, 8, .1, () => it.border, v => it.border = v, v => v.toFixed(1)),
-      slider('Arrondi', 0, 80, 1, () => it.radius, v => it.radius = v, v => String(Math.round(v))),
-      slider('Ombre', 0, 1, .01, () => it.shadow, v => it.shadow = v, pct)),
+      ...edits(it, 'rot', 'border', 'radius', 'shadow')),
     section('Couleur de bordure', chips(Object.keys(BORDER_COLORS), k => it.bcolor === BORDER_COLORS[k],
       k => { it.bcolor = BORDER_COLORS[k]; if (!it.border){ it.border = 1.5; syncSliders(); } })),
     section('Effet de bord', chips(BSTYLES, k => (it.bstyle || 'Uni') === k,
       k => { it.bstyle = k; if (it.border < 2.5 && ['Double', 'Dégradé', 'Déchiré'].includes(k)){ it.border = 3.5; syncSliders(); } })),
     section('Filtre', chips(['Noir et blanc'], () => !!it.bw, () => it.bw = !it.bw)),
     section(null, h('div', {class:'row'},
-      btn('Supprimer', () => { S.items.splice(S.sel, 1); S.sel = -1; buildSheet(); draw(); }, 'btn danger'))));
+      btn('Supprimer', () => { S.items.splice(S.sel, 1); S.sel = -1; refresh(); }, 'btn danger'))));
 }
 function pathPanel(it){
   return h('div', {},
     section('Forme du chemin', chips(Object.keys(PATHS), k => it.preset === k, k => { it.pts = presetPts(k); it.preset = k; it.smooth = k !== 'Zigzag'; buildSheet(); })),
     section(null,
       h('div', {class:'row'},
-        h('button', {class:'btn' + (S.drawPath ? ' primary' : ''), onclick:() => { S.drawPath = !S.drawPath; buildSheet(); draw(); }}, S.drawPath ? 'Annuler le tracé' : 'Dessiner à la main')),
+        h('button', {class:'btn' + (S.drawPath ? ' primary' : ''), onclick:() => { S.drawPath = !S.drawPath; refresh(); }}, S.drawPath ? 'Annuler le tracé' : 'Dessiner à la main')),
       h('div', {class:'row'},
         btn('+ Point', () => { addPoint(it); it.preset = null; draw(); }),
         btn('− Point', () => { if (it.pts.length > 2){ it.pts.pop(); it.preset = null; draw(); } })),
@@ -2057,6 +2065,15 @@ function pathPanel(it){
       slider('Points', 0, 40, .5, () => it.dot, v => it.dot = v, v => v ? String(Math.round(v)) : 'aucun')),
     actions(it));
 }
+/* Les mêmes curseurs revenaient dans quatre panneaux. Une seule définition,
+   et chacun prend ceux dont il a besoin. */
+const EDIT = {
+  rot:   it => slider('Rotation', -45, 45, .5, () => it.rot*180/Math.PI, v => it.rot = v*Math.PI/180, v => Math.round(v) + '°'),
+  border:it => slider('Bordure', 0, 8, .1, () => it.border, v => it.border = v, v => v.toFixed(1)),
+  radius:it => slider('Arrondi', 0, 80, 1, () => it.radius, v => it.radius = v, v => String(Math.round(v))),
+  shadow:it => slider('Ombre', 0, 1, .01, () => it.shadow, v => it.shadow = v, pct)
+};
+const edits = (it, ...keys) => keys.map(k => EDIT[k](it));
 function decoPanel(it){
   const SH = {'Dossier':'folder', 'Fichier':'file', 'Fenêtre':'window', 'Menus':'menubar', 'Dock':'dock', 'Bloc':'rect', 'Pellicule':'strip', 'Scotch':'tape'};
   const named = ['folder', 'file', 'window', 'bar', 'menubar', 'rect'].includes(it.shape);
@@ -2072,8 +2089,7 @@ function decoPanel(it){
     section('Réglages',
       slider('Largeur', 4, 140, .5, () => it.w/S.W*100, v => it.w = S.W*v/100, v => Math.round(v) + '%'),
       slider('Hauteur', 3, 200, 1, () => it.hr*100, v => it.hr = v/100, v => Math.round(v) + '%'),
-      slider('Arrondi', 0, 80, 1, () => it.radius, v => it.radius = v, v => String(Math.round(v))),
-      slider('Rotation', -45, 45, .5, () => it.rot*180/Math.PI, v => it.rot = v*Math.PI/180, v => Math.round(v) + '°')),
+      ...edits(it, 'radius', 'rot')),
     actions(it));
 }
 function textPanel(it){
@@ -2091,14 +2107,21 @@ function textPanel(it){
       slider('Taille', 10, 300, 1, () => it.size, v => it.size = v, v => String(Math.round(v))),
       slider('Espacement', 0, .6, .01, () => it.spacing, v => it.spacing = v, v => v.toFixed(2)),
       slider('Interligne', .8, 2, .01, () => it.lh || 1.25, v => it.lh = v, v => v.toFixed(2)),
-      slider('Rotation', -45, 45, .5, () => it.rot*180/Math.PI, v => it.rot = v*Math.PI/180, v => Math.round(v) + '°')),
+      ...edits(it, 'rot')),
     actions(it));
 }
-function addPath(){ S.items.push(newPathItem({})); S.sel = S.items.length - 1; buildSheet(); draw(); }
-function addDeco(){ S.items.push(newDeco({})); S.sel = S.items.length - 1; buildSheet(); draw(); }
-function addText(){ S.items.push(newTextItem({})); S.sel = S.items.length - 1; buildSheet(); draw(); }
+function addPath(){ S.items.push(newPathItem({})); S.sel = S.items.length - 1; refresh(); }
+function addDeco(){ S.items.push(newDeco({})); S.sel = S.items.length - 1; refresh(); }
+function addText(){ S.items.push(newTextItem({})); S.sel = S.items.length - 1; refresh(); }
 
+/* Le bouton Export se grise tant qu'il n'y a rien à exporter : plus clair
+   qu'un message d'erreur après coup. */
+function syncExport(){
+  const b = $('btnExport');
+  if (b) b.disabled = !usedMedia().size;
+}
 function buildSheet(){
+  syncExport();
   liveSliders = [];
   const body = $('sheetBody'); body.innerHTML = ''; body.scrollTop = 0;
   const it = S.items[S.sel];
@@ -2122,7 +2145,7 @@ function buildSheet(){
 }
 document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => { S.tab = b.dataset.tab; buildSheet(); }));
 $('btnBack').onclick = goHome;
-$('btnDone').onclick = () => { S.sel = -1; S.crop = false; S.drawPath = false; S.panelMode = 'actions'; buildSheet(); draw(); };
+$('btnDone').onclick = () => { S.sel = -1; S.crop = false; S.drawPath = false; S.panelMode = 'actions'; refresh(); };
 
 function showLoad(msg, sub){
   $('loadMsg').textContent = msg || 'Chargement…';
@@ -2155,7 +2178,7 @@ function restore(str){
   Object.assign(S.bg2, o.bg2, {media:byId(o.bg2.media)});
   S.items = o.items.map(i => Object.assign({}, i, {media:byId(i.media)}));
   S.sel = -1; S.crop = false; S.drawPath = false;
-  bgDirty = true; buildSheet(); draw(); updateUndo();
+  bgDirty = true; refresh(); updateUndo();
 }
 function mark(){
   const cur = snapshot();
@@ -2185,8 +2208,7 @@ async function buildStrip(m){
   if (m.strip) return m.strip;
   const v = m.el, dur = isFinite(v.duration) ? v.duration : 0;
   const N = 8, H2 = 152, W2 = Math.round(H2*(m.w/m.h))*1;
-  const c = document.createElement('canvas'); c.width = W2*N; c.height = H2;
-  const x = c.getContext('2d');
+  const [c, x] = offscreen(W2*N, H2);
   const was = v.currentTime, playing = !v.paused;
   v.pause();
   for (let i = 0; i < N; i++){
@@ -2213,7 +2235,7 @@ function closeTrim(){
   if (TRIM.stopHead){ TRIM.stopHead(); TRIM.stopHead = null; }
   $('trim').hidden = true; $('trimTop').innerHTML = ''; TRIM.vid = null;
   holdVideos = false; TRIM.m = null; TRIM.item = null;
-  buildSheet(); draw();
+  refresh();
 }
 function buildTrimUI(){
   const m = TRIM.m, dur = isFinite(m.el.duration) ? m.el.duration : 0;
@@ -2307,8 +2329,7 @@ async function openCutout(it){
   if (!m || m.kind !== 'image'){ toast('Le détourage ne marche que sur les photos.', 3000); return; }
   const MAX = 1100, r = Math.min(1, MAX/Math.max(m.w, m.h));
   const W = Math.max(1, Math.round(m.w*r)), H = Math.max(1, Math.round(m.h*r));
-  const c = document.createElement('canvas'); c.width = W; c.height = H;
-  const x = c.getContext('2d', {willReadFrequently:true}); x.imageSmoothingQuality = 'high';
+  const [c, x] = offscreen(W, H, {willReadFrequently:true});
   x.drawImage(m.el, 0, 0, W, H);
   CUT.item = it; CUT.src = c; CUT.W = W; CUT.H = H;
   CUT.rgba = x.getImageData(0, 0, W, H).data;
@@ -2401,13 +2422,13 @@ cutCv.addEventListener('pointermove', e => {
 });
 ['pointerup', 'pointercancel'].forEach(t => cutCv.addEventListener(t, () => CUT.drawing = false));
 function applyCutout(){
-  const c = document.createElement('canvas'); c.width = CUT.W; c.height = CUT.H;
-  c.getContext('2d').drawImage(cutCv, 0, 0);
+  const [c, x] = offscreen(CUT.W, CUT.H);
+  x.drawImage(cutCv, 0, 0);
   const m = {kind:'image', el:c, w:CUT.W, h:CUT.H, id:++mid, cut:true};
   m.thumb = makeThumb(m); S.lib.push(m);
   const it = CUT.item;
   it.media = m; it.ar = 0; it.pz = 1; it.px = it.py = 0; it.border = 0; it.shadow = 0; it.radius = 0;
-  closeCutout(); buildSheet(); draw(); mark(); toast('Objet détouré', 1600);
+  closeCutout(); refresh(); mark(); toast('Objet détouré', 1600);
 }
 function buildCutPanel(){
   liveSliders = [];
@@ -2431,6 +2452,15 @@ function buildCutPanel(){
 window.addEventListener('resize', () => { if (!$('cut').hidden) fitCut(); });
 
 /* ================= Export ================= */
+/* Un dialogue standard : titre, paragraphes, boutons. Le bouton d'annulation
+   est ajouté tout seul, on l'oubliait une fois sur deux. */
+function dialog(title, lines, buttons, cancel){
+  const body = h('div', {class:'ov-box'}, h('b', {}, title),
+    ...[].concat(lines).filter(Boolean).map(l => typeof l === 'string' ? h('p', {}, l) : l));
+  const list = [].concat(buttons).filter(Boolean);
+  if (cancel !== false) list.push(btn(cancel || 'Annuler', closeOverlay, 'btn'));
+  showOverlay(body, list);
+}
 function showOverlay(content, buttons){
   const b = $('ovBody'); b.innerHTML = ''; b.appendChild(content);
   const r = $('ovBtns'); r.innerHTML = ''; buttons.forEach(x => r.appendChild(x));
@@ -2689,6 +2719,18 @@ function muxMp4(tracks){
   return new Blob(data, {type:'video/mp4'});
 }
 
+/* Les deux encodeurs (image et son) récupèrent leurs morceaux de la même
+   façon : on l'écrit une fois. */
+function chunkSink(out){
+  return (chunk, meta) => {
+    if (!out.desc && meta && meta.decoderConfig && meta.decoderConfig.description)
+      out.desc = new Uint8Array(meta.decoderConfig.description);
+    const b = new Uint8Array(chunk.byteLength); chunk.copyTo(b);
+    out.chunks.push(b); out.sizes.push(b.length);
+    if (out.syncs && chunk.type === 'key') out.syncs.push(out.chunks.length);
+  };
+}
+
 /* ---------- Son ----------
    Une seule bande-son part à l'export : celle de la vidéo choisie. On la décode
    en PCM, on la découpe exactement comme l'image (même départ, même boucle),
@@ -2768,17 +2810,10 @@ async function buildAudioTrack(D){
     return a + (b - a)*f;
   };
 
-  const chunks = [], sizes = [];
-  let desc = null, failed = null;
-  const enc = new AudioEncoder({
-    output:(chunk, meta) => {
-      if (!desc && meta && meta.decoderConfig && meta.decoderConfig.description)
-        desc = new Uint8Array(meta.decoderConfig.description);
-      const b = new Uint8Array(chunk.byteLength); chunk.copyTo(b);
-      chunks.push(b); sizes.push(b.length);
-    },
-    error:e => { failed = e; }
-  });
+  const out = {chunks:[], sizes:[], desc:null};
+  const {chunks, sizes} = out;
+  let failed = null;
+  const enc = new AudioEncoder({output:chunkSink(out), error:e => { failed = e; }});
   try { enc.configure(cfg); } catch(e){ audioIssue = "L’encodeur audio a refusé de démarrer."; return null; }
 
   const BLK = 4096;
@@ -2797,6 +2832,7 @@ async function buildAudioTrack(D){
     if (i % (BLK*8) === 0) await new Promise(r => setTimeout(r, 0));
   }
   try { await enc.flush(); enc.close(); } catch(e){ failed = e; }
+  const desc = out.desc;
   if (failed){ audioIssue = "L’encodage du son a échoué."; return null; }
   if (!desc || !chunks.length){ audioIssue = "L’encodeur n’a rien produit."; return null; }
   return {kind:'aud', channels:ch, timescale:rate, delta:1024, count:chunks.length,
@@ -2819,24 +2855,16 @@ async function exportPrecise(cad, OW, OH, bitrate){
   const pick = await pickEncoder(OW, OH, bitrate, cad.fps);
   if (!pick) return null;
   outC.width = OW; outC.height = OH;
-  const chunks = [], sizes = [], syncs = [];
-  let desc = null, failed = null;
-  const enc = new VideoEncoder({
-    output:(chunk, meta) => {
-      if (!desc && meta && meta.decoderConfig && meta.decoderConfig.description)
-        desc = new Uint8Array(meta.decoderConfig.description);
-      const buf = new Uint8Array(chunk.byteLength); chunk.copyTo(buf);
-      chunks.push(buf); sizes.push(buf.length);
-      if (chunk.type === 'key') syncs.push(chunks.length);
-    },
-    error:e => { failed = e; }
-  });
+  const out = {chunks:[], sizes:[], syncs:[], desc:null};
+  const {chunks, sizes, syncs} = out;
+  let failed = null;
+  const enc = new VideoEncoder({output:chunkSink(out), error:e => { failed = e; }});
   enc.configure(pick.cfg);
 
   const bar = h('div', {class:'prog'}, h('i')), label = h('p', {}, 'Préparation…');
-  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Fabrication de la vidéo'),
-    h('p', {}, `${OW}×${OH} · ${cad.fps.toFixed(2).replace(/\.?0+$/, '')} i/s · ${(total/cad.fps).toFixed(1)} s`),
-    label, bar, h('p', {}, 'Image par image : ça prend un peu plus longtemps, mais rien ne saute.')),
+  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Ta vidéo se prépare'),
+    h('p', {}, `${(total/cad.fps).toFixed(1)} secondes au format story.`),
+    label, bar, h('p', {}, 'Laisse l’app ouverte, c’est presque fini.')),
     [btn('Arrêter', () => { abortExport = true; }, 'btn danger')]);
 
   holdVideos = true; exporting = true; offlineExport = true;
@@ -2860,13 +2888,14 @@ async function exportPrecise(cad, OW, OH, bitrate){
       const done = i + 1, el = (performance.now() - t0)/1000;
       bar.firstChild.style.width = (done/total*100) + '%';
       const eta = done > 3 ? Math.round(el/done*(total - done)) : 0;
-      label.textContent = `${done} / ${total} images` + (eta > 1 ? ` · encore ~${eta} s` : '');
+      label.textContent = Math.round(done/total*100) + ' %' + (eta > 1 ? ` · encore ${eta} s` : '');
       if (done % 4 === 0) await new Promise(r => setTimeout(r, 0));
     }
     await enc.flush();
   } catch(e){ failed = e; }
   try { enc.close(); } catch(e){}
   setGrainFrame(null); exporting = false; holdVideos = false; offlineExport = false; layout(); draw();
+  const desc = out.desc;
   if (failed || !desc || !chunks.length || i < 2) return null;
   if (!syncs.length) syncs.push(1);
   const mul = cad.num < 1000 ? 1000 : 1;
@@ -2917,7 +2946,7 @@ async function exportRealtime(OW, OH, bitrate, cad){
   const fps = Math.min(30, Math.max(24, Math.round(cad.fps)));
   const D = clamp(videoDuration(), 1, 60);
   const bar = h('div', {class:'prog'}, h('i')), label = h('p', {}, 'Préparation…');
-  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Enregistrement en temps réel'), label, bar), []);
+  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Ta vidéo se prépare'), label, bar), []);
   holdVideos = true;
   const vids = usedVideos();
   for (const m of usedVideoMedia()){ try { m.el.pause(); } catch(e){} await seekTo(m.el, m.start || 0); }
@@ -2973,7 +3002,7 @@ async function exportRealtime(OW, OH, bitrate, cad){
   const type = (rec.mimeType || mime || 'video/mp4').split(';')[0], ext = type.includes('mp4') ? 'mp4' : 'webm';
   const blob = new Blob(chunks, {type});
   showResult(blob, ext, OW, OH, fps, codecLabel(rec.mimeType || mime || ''),
-    dropped > total*.1 ? `${dropped} images perdues : passe en mode précis pour un rendu net.` : null,
+    dropped > total*.1 ? 'L’image a un peu sauté. Refais-la en « Meilleure qualité » pour un rendu net.' : null,
     !!aTrack);
 }
 
@@ -3015,8 +3044,8 @@ function exportImage(story){
 /* ---------- Menu d'export ---------- */
 async function runVideo(mode, OW, OH, bitrate){
   abortExport = false;
-  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Lecture de la source'),
-    h('p', {}, 'Mesure de la cadence des vidéos…')), []);
+  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Un instant'),
+    h('p', {}, 'L’app lit tes vidéos…')), []);
   const cad = await sourceCadence();
   if (mode === 'precise' && HAS_WEBCODECS){
     const r = await exportPrecise(cad, OW, OH, bitrate);
@@ -3040,28 +3069,26 @@ async function exportFlow(){
   buildSheet(); render();
   if (!usesVideo()){
     const is916 = S.fmt === '9:16';
-    showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Exporter'),
-      h('p', {}, is916 ? `${S.W}×${S.H} · déjà au format Story.`
-        : `La composition est en ${S.fmt}. Instagram remplit l'écran en 9:16.`)),
-      [btn('Image Story 1080×1920', () => exportImage(true), 'btn primary big'),
-       btn(`Format d'origine (${S.fmt})`, () => exportImage(false), 'btn big'),
-       btn('Annuler', closeOverlay, 'btn')]);
+    dialog('Enregistrer ton montage',
+      is916 ? 'Ton montage est déjà au bon format pour une story.'
+            : 'Pour une story, ton montage sera centré sur toute la hauteur de l’écran.',
+      [btn('Pour une story', () => exportImage(true), 'btn primary big'),
+       btn('Garder mon format', () => exportImage(false), 'btn big')]);
     return;
   }
   const D = clamp(videoDuration(), 1, 60);
   const is916 = S.fmt === '9:16';
-  showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Exporter la vidéo'),
-    h('p', {}, `${D.toFixed(1)} s · sortie 1080×1920, cadence reprise de tes vidéos.`),
-    h('p', {}, HAS_WEBCODECS
-      ? 'Le mode précis fabrique la vidéo image par image : durée exacte, aucune image perdue. C’est le bon choix.'
-      : 'Ce navigateur ne permet que la capture en temps réel. Safari ou Chrome à jour donnent un rendu plus net.'),
-    is916 ? null : h('p', {}, `La composition est en ${S.fmt} : elle sera centrée, le reste rempli par un fond flouté.`),
-    h('b', {style:'font-size:14px'}, 'Son de la story'), soundPicker()),
-    [HAS_WEBCODECS ? btn('Story Instagram · précis', () => runVideo('precise', IG_W, IG_H, 10000000), 'btn primary big') : null,
-     btn(HAS_WEBCODECS ? 'Rapide (temps réel)' : 'Story Instagram', () => runVideo('rt', IG_W, IG_H, 9000000), 'btn big'),
-     btn('Léger (720×1280)', () => runVideo(HAS_WEBCODECS ? 'precise' : 'rt', 720, 1280, 5000000), 'btn big'),
-     btn('Image fixe', () => exportImage(true), 'btn big'),
-     btn('Annuler', closeOverlay, 'btn')].filter(Boolean));
+  dialog('Enregistrer ta vidéo', [
+    `Une story de ${D.toFixed(1)} secondes, prête pour Instagram.`,
+    HAS_WEBCODECS
+      ? 'La meilleure qualité prend une minute environ. Le mode rapide est immédiat, mais l’image peut saccader.'
+      : 'Ton navigateur ne propose que le mode rapide. Safari ou Chrome à jour donnent un plus beau rendu.',
+    is916 ? null : 'Ton montage sera centré, le reste de l’écran rempli par un fond flouté.',
+    h('b', {style:'font-size:14px'}, 'Quel son garder ?'), soundPicker()],
+    [HAS_WEBCODECS ? btn('Meilleure qualité', () => runVideo('precise', IG_W, IG_H, 10000000), 'btn primary big') : null,
+     btn(HAS_WEBCODECS ? 'Rapide' : 'Enregistrer', () => runVideo('rt', IG_W, IG_H, 9000000), 'btn big'),
+     btn('Fichier plus léger', () => runVideo(HAS_WEBCODECS ? 'precise' : 'rt', 720, 1280, 5000000), 'btn big'),
+     btn('Juste une image', () => exportImage(true), 'btn big')]);
 }
 $('btnExport').onclick = exportFlow;
 
@@ -3322,10 +3349,8 @@ async function buildDrafts(){
     const kill = h('button', {class:'draft-x', 'aria-label':'Supprimer ce brouillon',
       onclick:e => {
         e.stopPropagation();
-        showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Supprimer ce brouillon ?'),
-          h('p', {}, d.name + ' — cette action est définitive.')),
-          [btn('Supprimer', () => { closeOverlay(); removeDraft(d.id); }, 'btn danger big'),
-           btn('Annuler', closeOverlay, 'btn')]);
+        dialog('Supprimer ce brouillon ?', d.name + ' — cette action est définitive.',
+          btn('Supprimer', () => { closeOverlay(); removeDraft(d.id); }, 'btn danger big'));
       }}, '×');
     grid.appendChild(h('div', {class:'draft'}, card, kill));
   });
