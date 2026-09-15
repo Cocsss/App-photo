@@ -148,10 +148,38 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 .daybtn.today{border-color:var(--accent)}
 .pickgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .pickgrid .thumb{aspect-ratio:1}
-#trim{position:fixed;inset:0;z-index:36;background:rgba(10,18,16,.94);display:flex;flex-direction:column;justify-content:flex-end}
-#trimTop{flex:1;display:flex;align-items:center;justify-content:center;padding:18px}
-#trimTop video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:var(--r3);background:#15171b}
-#trimPanel{background:var(--sheet);border-radius:24px 24px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px -24px #000}
+#trim{position:fixed;inset:0;z-index:36;background:rgba(10,18,16,.96);display:flex;flex-direction:column;
+  -webkit-user-select:none;user-select:none}
+#trimTop{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
+  padding:calc(14px + env(safe-area-inset-top)) 14px 10px;overflow:hidden}
+#trimTop video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:var(--r3);background:#15171b;display:block}
+#trimBar{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 4px}
+#trimBar b{flex:1;text-align:center;font-size:15px;font-weight:600;letter-spacing:-.2px}
+#trimTransport{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 10px}
+#trimTransport .play{width:52px;height:52px;border:0;border-radius:50%;background:var(--accent);
+  color:var(--accent-ink);font-size:17px;flex:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 20px -10px var(--accent)}
+#trimTransport .play:active{transform:scale(.93)}
+#trimTransport .side{flex:1;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+#trimTransport .side.r{text-align:right}
+#trimTransport .side b{color:var(--ink);font-size:16px;font-weight:650;letter-spacing:-.3px}
+.ruler{display:block;width:100%;height:16px;opacity:.5;margin-bottom:2px}
+.toolrow{display:flex;gap:4px;margin:10px 0 2px}
+.toolrow button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  min-height:58px;border:0;border-radius:var(--r2);background:transparent;color:var(--muted);
+  font:inherit;font-size:11.5px;transition:color .16s ease,background .16s ease}
+.toolrow button i{font-style:normal;font-size:19px;line-height:1}
+.toolrow button.on{background:var(--fill);color:var(--ink);box-shadow:inset 0 1px 0 var(--fill-hi)}
+.toolrow button.on i{color:var(--accent)}
+#trimPanel{flex:0 0 auto;background:var(--sheet);border-radius:var(--r4) var(--r4) 0 0;
+  padding:12px 12px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -1px 0 rgba(255,255,255,.07)}
+#trimPanel .row{gap:8px;margin:8px 0 0}
+#trimPanel .btn{min-height:44px;font-size:13.5px}
+#trimPanel .group{padding:6px 0;gap:8px}
+#trimPanel .group+.group{border-top:0}
+#trimPanel .tabs{margin:10px 0 2px}
+#trimPanel .hint{margin:8px 2px 0}
 .strip{display:flex;align-items:center;gap:8px;background:#0f1211;border-radius:var(--r2);padding:6px;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
 .strip .play{width:48px;height:48px;flex:none;border:0;border-radius:11px;background:var(--fill);color:var(--ink);font-size:16px}
 .stripBox{position:relative;flex:1;overflow:hidden;border-radius:8px;touch-action:none;height:76px}
@@ -164,7 +192,10 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 .stripBox .head{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);box-shadow:0 0 10px var(--accent);pointer-events:none;transition:left .08s linear}
 .stripBox.loading::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.16),rgba(255,255,255,.06));background-size:200% 100%;animation:sh 1.1s linear infinite}
 @keyframes sh{to{background-position:-200% 0}}
-.trimRow{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin:8px 2px 2px;font-variant-numeric:tabular-nums}
+.trimRow{display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;margin:7px 2px 0;font-variant-numeric:tabular-nums}
+.trimClock{display:flex;justify-content:center;align-items:baseline;gap:6px;margin:0 0 8px;font-variant-numeric:tabular-nums}
+.trimClock b{font-size:17px;font-weight:650;letter-spacing:-.3px}
+.trimClock span{font-size:13px;color:var(--muted)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .act{min-height:66px;border-radius:var(--r3);border:0;background:var(--fill);font:inherit;font-size:15px;
   font-weight:600;letter-spacing:-.15px;color:var(--ink);display:flex;align-items:center;justify-content:center;
@@ -274,6 +305,11 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 <div class="ov" id="ov" hidden><div class="ov-card"><div id="ovBody"></div><div class="col" id="ovBtns"></div></div></div>
 <div id="vids"></div>
 <div id="trim" hidden>
+  <div id="trimBar">
+    <button class="back" id="trimBack" aria-label="Retour">‹</button>
+    <b id="trimTitle">Édition</b>
+    <button class="done" id="trimDone">Terminé</button>
+  </div>
   <div id="trimTop"></div>
   <div id="trimPanel"></div>
 </div>
@@ -688,6 +724,10 @@ async function ingest(files){
   for (const f of files){
     $('loadSub').textContent = files.length > 1 ? `${done + 1} sur ${files.length}` : (isVideoFile(f) ? 'Lecture de la vidéo…' : 'Préparation…');
     await nextFrame();
+    if (isVideoFile(f) && f.size > 600*1024*1024){
+      failReason = 'Cette vidéo pèse ' + Math.round(f.size/1048576) + ' Mo. Au-delà de 600 Mo un téléphone ne suit plus : raccourcis-la ou exporte-la en qualité moindre.';
+      done++; continue;
+    }
     const m = isVideoFile(f) ? await loadVideo(f) : await loadImage(f);
     done++;
     /* Une vidéo refusée : on lit ses en-têtes pour dire précisément pourquoi
@@ -2427,8 +2467,12 @@ function buildTrimUI(){
   box.appendChild(cv2); box.appendChild(win); box.appendChild(head);
   const play = h('button', {class:'play', 'aria-label':'Lecture'}, '▶');
   play.onclick = () => { if (prev.paused){ prev.play().catch(() => {}); play.textContent = '❚❚'; } else { prev.pause(); play.textContent = '▶'; } };
-  const strip = h('div', {class:'strip'}, play, box);
+  const ruler = h('canvas', {class:'ruler', width:600, height:32});
+  const strip = h('div', {class:'strip'}, box);
   const info = h('div', {class:'trimRow'}, h('span', {}, ''), h('span', {}, ''));
+  const tPos = h('div', {class:'side'}, h('b', {}, '0,0 s'));
+  const tDur = h('div', {class:'side r'}, '');
+  const transport = h('div', {id:'trimTransport'}, tPos, play, tDur);
   const restart = () => {
     const st = m.start || 0;
     try { prev.currentTime = st; } catch(e){}
@@ -2436,16 +2480,32 @@ function buildTrimUI(){
     try { m.el.currentTime = st; } catch(e){}
   };
   const endOf = () => (m.end && m.end > 0 ? Math.min(m.end, dur) : dur);
+  const drawRuler = () => {
+    const w = ruler.width, hh = ruler.height, x = ruler.getContext('2d');
+    x.clearRect(0, 0, w, hh);
+    const step = dur <= 6 ? .5 : dur <= 20 ? 1 : 5;
+    x.fillStyle = '#9aa7a4'; x.font = '15px -apple-system,system-ui,sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'top';
+    for (let t = 0; t <= dur + .001; t += step){
+      const px = t/dur*w, big = Math.abs(t % (step*4)) < .001;
+      x.globalAlpha = big ? .9 : .45;
+      x.fillRect(Math.min(w - 1, px), 0, 1, big ? 7 : 4);
+      if (big && px < w - 12) x.fillText(Math.round(t) + 's', clamp(px, 12, w - 12), 9);
+    }
+    x.globalAlpha = 1;
+  };
   const sync = () => {
     const st = m.start || 0, en = endOf();
     const left = dur ? st/dur*100 : 0, wpc = dur ? (en - st)/dur*100 : 100;
     win.style.left = left + '%'; win.style.width = wpc + '%';
     info.firstChild.textContent = fmtT(st) + ' → ' + fmtT(en);
     info.lastChild.textContent = fmtT(en - st) + ' gardées sur ' + fmtT(dur);
+    tDur.textContent = fmtT(dur);
   };
   const moveHead = () => {
     if (!dur) return;
     head.style.left = clamp(prev.currentTime/dur, 0, 1)*100 + '%';
+    tPos.firstChild.textContent = fmtT(prev.currentTime);
   };
   prev.addEventListener('timeupdate', () => {
     const st = m.start || 0;
@@ -2463,7 +2523,13 @@ function buildTrimUI(){
   };
   /* Trois gestes : tirer le bord gauche, tirer le bord droit, ou déplacer la
      fenêtre entière. C'est la convention de tous les outils de découpe. */
-  const apply = (mode, clientX, off) => {
+  /* Repositionner la vidéo à chaque pixel du glissement la fait bégayer : chaque
+     déplacement déclenche un accès disque. On bouge la fenêtre tout de suite —
+     c'est ça qu'on regarde — et on ne repositionne l'image qu'une fois le doigt
+     immobile, puis à la fin du geste. */
+  let seekT = 0;
+  const commit = () => { clearTimeout(seekT); restart(); draw(); };
+  const apply = (mode, clientX, off, live) => {
     const t = timeAt(clientX), st = m.start || 0, en = endOf();
     if (mode === 'L') m.start = clamp(t, 0, en - MIN);
     else if (mode === 'R') m.end = clamp(t, st + MIN, dur);
@@ -2472,7 +2538,9 @@ function buildTrimUI(){
       m.start = clamp(t - off, 0, Math.max(0, dur - len));
       m.end = m.start + len;
     }
-    sync(); restart(); draw();
+    sync();
+    if (live){ clearTimeout(seekT); seekT = setTimeout(commit, 120); }
+    else commit();
   };
   box.addEventListener('pointerdown', e => {
     box.setPointerCapture(e.pointerId);
@@ -2485,13 +2553,16 @@ function buildTrimUI(){
     else if (Math.abs(px - xr) < grab) mode = 'R';
     else if (px < xl || px > xr){ mode = 'M'; off = (en - st)/dur*r.width/2; }
     TRIM.drag = {mode, off:off/r.width*dur};
-    apply(mode, e.clientX, TRIM.drag.off);
+    apply(mode, e.clientX, TRIM.drag.off, true);
   });
   box.addEventListener('pointermove', e => {
     if (!e.buttons || !TRIM.drag) return;
-    apply(TRIM.drag.mode, e.clientX, TRIM.drag.off);
+    apply(TRIM.drag.mode, e.clientX, TRIM.drag.off, true);
   });
-  ['pointerup', 'pointercancel'].forEach(t => box.addEventListener(t, () => TRIM.drag = null));
+  ['pointerup', 'pointercancel'].forEach(t => box.addEventListener(t, () => {
+    if (TRIM.drag) commit();
+    TRIM.drag = null;
+  }));
   const nudge = d => {
     const len = endOf() - (m.start || 0);
     m.start = clamp((m.start || 0) + d, 0, Math.max(0, dur - len));
@@ -2534,17 +2605,19 @@ function buildTrimUI(){
         h('p', {class:'hint'}, 'Tire les deux bords blancs pour le début et la fin. Glisse au milieu pour déplacer le passage sans changer sa durée.')));
     }
   };
-  const tabs = h('div', {class:'tabs'});
+  const TOOLS = [['Découper', '⇥'], ['Vitesse', '⏱'], ['Couleur', '◑'], ['Cadre', '⤢']];
+  const tabs = h('div', {class:'toolrow'});
   const paintTabs = () => {
     tabs.innerHTML = '';
-    ['Découper', 'Vitesse', 'Couleur', 'Cadre'].forEach(t =>
+    TOOLS.forEach(([t, ico]) =>
       tabs.appendChild(h('button', {class:TRIM.tab === t ? 'on' : '',
-        onclick:() => { TRIM.tab = t; paintTabs(); paintTools(); }}, t)));
+        onclick:() => { TRIM.tab = t; paintTabs(); paintTools(); }},
+        h('i', {}, ico), t)));
   };
   TRIM.tab = TRIM.tab || 'Découper';
   paintTabs(); paintTools();
-  P.appendChild(section(null, strip, info, tabs, tools,
-    h('div', {class:'row'}, btn('Terminé', closeTrim, 'btn primary big'))));
+  P.appendChild(section(null, transport, ruler, strip, info, tabs, tools,
+));
   box.classList.add('loading');
   /* On fabrique la bande à la taille réelle de son emplacement, sinon elle
      s'affiche écrasée. */
@@ -2557,6 +2630,15 @@ function buildTrimUI(){
       cv2.getContext('2d').drawImage(c, 0, 0);
       box.classList.remove('loading');
     });
+  });
+  $('trimBack').onclick = closeTrim;
+  $('trimDone').onclick = closeTrim;
+  $('trimTitle').textContent = m.kind === 'video' ? 'Édition' : 'Recadrage';
+  requestAnimationFrame(() => {
+    const r = ruler.getBoundingClientRect();
+    ruler.width = Math.max(200, Math.round(r.width*2));
+    ruler.height = 32;
+    drawRuler();
   });
   sync();
 }
@@ -2928,7 +3010,7 @@ async function loadCube(file){
     hideLoad();
     if (!p){ toast('Ce fichier .cube n’a pas pu être lu.', 3500); return false; }
     LUT.data = p.data; LUT.size = p.size;
-    LUT.name = (file.name || 'LUT').replace(/\.cube$/i, '');
+    LUT.name = (file.name || 'LUT').replace(/\.(cube|txt)$/i, '').replace(/\.cube$/i, '').trim();
     if (GLX) GLX.loaded = null;
     return true;
   } catch(e){ hideLoad(); toast('Impossible d’ouvrir ce fichier.', 3000); return false; }
