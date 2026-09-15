@@ -156,6 +156,13 @@ header .tools button{width:30px;height:30px;border-radius:50%;border:1px solid v
 .ov-box p{margin:0;color:var(--muted);font-size:14px}
 .prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:6px}
 .prog i{display:block;height:100%;width:0;background:var(--accent)}
+#drafts{margin:0 0 4px}
+#drafts h2{font-size:15px;margin:0 0 10px;padding:0 18px;opacity:.72;font-weight:600;letter-spacing:-.2px}
+.draft-blank{width:132px;height:235px;border-radius:16px;background:#1a1e1d;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset}
+.draft{position:relative;display:inline-block}
+.draft-x{position:absolute;top:-4px;right:-4px;width:26px;height:26px;border-radius:50%;
+  border:none;background:#20252a;color:#fff;font-size:17px;line-height:1;z-index:2;
+  box-shadow:0 2px 8px -2px rgba(0,0,0,.7)}
 #vids{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none;overflow:hidden}
 #vids video{width:2px;height:2px}
 </style>
@@ -169,6 +176,7 @@ header .tools button{width:30px;height:30px;border-radius:50%;border:1px solid v
 <div id="home">
   <h1>Montage</h1>
   <p class="sub">Choisis un modèle pour commencer.</p>
+  <div id="drafts" hidden></div>
   <div id="homeCards"></div>
 </div>
 
@@ -1776,7 +1784,7 @@ function openEditor(i){
   buildSheet(); layout(); draw();
   if (!S.lib.length) toast('Ajoute tes photos dans l’onglet Photos.', 3000);
 }
-function goHome(){ S.sel = -1; S.crop = false; buildSheet(); $('home').hidden = false; buildHome(); }
+function goHome(){ S.sel = -1; S.crop = false; flushSave(true); buildSheet(); $('home').hidden = false; buildHome(); buildDrafts(); }
 
 const PANELS = {
   media: () => h('div', {},
@@ -3099,13 +3107,13 @@ $('btnZoom').onclick = () => {
   $('btnZoom').textContent = big ? '⤡' : '⤢';
   layout();
 };
-try { if (!localStorage.getItem('montageSeen')) setTimeout(showHelp, 400); } catch(e){}
+/* Plus d'écran d'accueil imposé : l'aide reste accessible depuis l'onglet Réglages. */
 
 function resetAll(){
   S.lib.forEach(m => { if (m.kind === 'video'){ try { m.el.pause(); m.el.remove(); } catch(e){} } });
   S.lib = []; S.items = []; S.sel = -1; S.crop = false; S.drawPath = false;
   S.audio.id = null;
-  wipeAll();
+  docId = null; lastThumb = null; setCurrent(null).catch(() => {});
   S.bg.media = null; S.bg2.media = null; S.split = false; S.vsplit = false;
   HIST.past = []; HIST.future = [];
   S.tab = 'media'; applyTemplate(0); buildSheet(); bgDirty = true; draw(); mark(); goHome();
@@ -3114,10 +3122,11 @@ function resetAll(){
 
 
 /* ================= Mémoire =================
-   Le montage en cours et les fichiers importés sont gardés dans IndexedDB.
-   Tu fermes l'app, tu la rouvres : tout est là. */
+   Chaque montage est un brouillon : il se sauvegarde tout seul dans IndexedDB,
+   avec sa vignette. Tu quittes l'app en plein travail, tu la rouvres, tu es
+   exactement là où tu t'étais arrêté. Et tu peux en mener plusieurs de front. */
 const DB_NAME = 'montage-studio', DB_V = 1;
-let dbPromise = null, saveT = 0, restoring = false;
+let dbPromise = null, saveT = 0, restoring = false, docId = null, thumbAt = 0, lastThumb = null;
 function db(){
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((res, rej) => {
@@ -3133,7 +3142,7 @@ function db(){
   }).catch(e => { dbPromise = null; throw e; });
   return dbPromise;
 }
-/* Tout se fait dans la même transaction : la rouvrir plus tard la ferait expirer. */
+/* Tout dans la même transaction : la rouvrir plus tard la ferait expirer. */
 function idb(store, mode, fn){
   return db().then(d => new Promise((res, rej) => {
     const t = d.transaction(store, mode), s = t.objectStore(store);
@@ -3146,46 +3155,60 @@ function idb(store, mode, fn){
 }
 const putMedia = rec => idb('media', 'readwrite', s => s.put(rec));
 const getMedia = uid => idb('media', 'readonly', s => s.get(uid));
-const putState = v => idb('state', 'readwrite', s => s.put(v, 'current'));
-const getState = () => idb('state', 'readonly', s => s.get('current'));
-const wipeAll = () => Promise.all([
-  idb('media', 'readwrite', s => s.clear()),
-  idb('state', 'readwrite', s => s.clear())
-]).catch(() => {});
+const allMediaKeys = () => idb('media', 'readonly', s => s.getAllKeys());
+const putDoc = doc => idb('state', 'readwrite', s => s.put(doc, 'doc:' + doc.id));
+const getDoc = id => idb('state', 'readonly', s => s.get('doc:' + id));
+const delDoc = id => idb('state', 'readwrite', s => s.delete('doc:' + id));
+const allDocs = () => idb('state', 'readonly', s => s.getAll()).then(v => (v || []).filter(d => d && d.id));
+const setCurrent = id => idb('state', 'readwrite', s => s.put(id, 'current'));
+const getCurrent = () => idb('state', 'readonly', s => s.get('current'));
 
 function newUid(){ return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
-/* Le fichier d'origine est rangé une seule fois, à l'import. */
 async function rememberMedia(m, file){
   if (!m.uid) m.uid = newUid();
   try { await putMedia({uid:m.uid, name:file.name || 'media', type:file.type || '', kind:m.kind, blob:file}); }
   catch(e){}
 }
 
+/* La vignette coûte un rendu complet : au plus une toutes les 12 secondes. */
+function draftThumb(){
+  const now = Date.now();
+  if (lastThumb && now - thumbAt < 12000) return lastThumb;
+  try {
+    const prev = exporting; exporting = true; render(); exporting = prev;
+    lastThumb = coverFromCanvas(); thumbAt = now; draw();
+  } catch(e){}
+  return lastThumb;
+}
+function docRecord(withThumb){
+  if (!docId) docId = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  return {
+    id:docId, at:Date.now(),
+    name:(TPL[S.tpl] && TPL[S.tpl].name) || 'Montage',
+    thumb:withThumb ? draftThumb() : lastThumb,
+    snap:snapshot(), tpl:S.tpl, tab:S.tab,
+    video:Object.assign({}, S.video), cal:Object.assign({}, S.cal),
+    audio:(S.lib.find(m => m.id === S.audio.id) || {}).uid || null,
+    lib:S.lib.filter(m => m.uid).map(m => ({uid:m.uid, id:m.id, start:m.start || 0}))
+  };
+}
+function flushSave(withThumb){
+  if (restoring || !S.lib.length) return Promise.resolve();
+  clearTimeout(saveT);
+  const doc = docRecord(withThumb);
+  return putDoc(doc).then(() => setCurrent(doc.id)).catch(() => {});
+}
 function saveSoon(){
-  /* Sans média il n'y a rien à retenir, et surtout : au lancement on ne veut pas
-     écraser la sauvegarde avec le montage vide avant de l'avoir relue. */
+  /* Sans média rien à retenir, et au lancement on ne veut surtout pas écraser
+     la sauvegarde avec le montage vide avant de l'avoir relue. */
   if (restoring || !S.lib.length) return;
   clearTimeout(saveT);
-  saveT = setTimeout(() => {
-    if (restoring) return;
-    const doc = {
-      at:Date.now(), snap:snapshot(), tpl:S.tpl, tab:S.tab,
-      video:Object.assign({}, S.video), cal:Object.assign({}, S.cal),
-      audio:(S.lib.find(m => m.id === S.audio.id) || {}).uid || null,
-      lib:S.lib.filter(m => m.uid).map(m => ({uid:m.uid, id:m.id, start:m.start || 0}))
-    };
-    putState(doc).catch(() => {});
-  }, 900);
+  saveT = setTimeout(() => flushSave(true), 900);
 }
 
-async function restoreSession(){
-  let doc = null;
-  try { doc = await getState(); } catch(e){ return false; }
-  if (!doc || !doc.lib || !doc.lib.length || !doc.snap) return false;
-  restoring = true;
-  showLoad('Reprise de ton montage', 'Rechargement de tes médias…');
-  await nextFrame();
+async function hydrate(doc){
+  S.lib = [];
   let maxId = 0;
   for (const e of doc.lib){
     let rec = null;
@@ -3203,20 +3226,110 @@ async function restoreSession(){
     maxId = Math.max(maxId, m.id);
     S.lib.push(m);
   }
-  hideLoad();
-  if (!S.lib.length){ restoring = false; return false; }
+  if (!S.lib.length) return false;
   mid = Math.max(mid, maxId);
+  docId = doc.id;
   S.tpl = doc.tpl || 0;
   Object.assign(S.video, doc.video || {});
   Object.assign(S.cal, doc.cal || {});
   const am = S.lib.find(m => m.uid === doc.audio);
   S.audio.id = am ? am.id : null;
-  try { restore(doc.snap); } catch(e){ restoring = false; return false; }
+  restore(doc.snap);
   S.tab = doc.tab || 'media';
+  lastThumb = doc.thumb || null; thumbAt = 0;
   HIST.past = [snapshot()]; HIST.future = [];
+  return true;
+}
+
+async function openDraft(id){
+  let doc = null;
+  try { doc = await getDoc(id); } catch(e){}
+  if (!doc){ toast('Ce brouillon est introuvable.', 2500); return; }
+  restoring = true;
+  showLoad('Ouverture du brouillon', 'Rechargement de tes médias…');
+  await nextFrame();
+  let ok = false;
+  try { ok = await hydrate(doc); } catch(e){ ok = false; }
+  hideLoad();
   restoring = false;
+  if (!ok){ toast('Les médias de ce brouillon ont été perdus.', 3500); return; }
+  await setCurrent(id).catch(() => {});
+  $('home').hidden = true;
+  buildSheet(); bgDirty = true; layout(); draw(); updateUndo();
+}
+
+async function restoreSession(){
+  let id = null;
+  try { id = await getCurrent(); } catch(e){ return false; }
+  if (!id) return false;
+  let doc = null;
+  try { doc = await getDoc(id); } catch(e){ return false; }
+  if (!doc || !doc.lib || !doc.lib.length || !doc.snap) return false;
+  restoring = true;
+  showLoad('Reprise de ton montage', 'Rechargement de tes médias…');
+  await nextFrame();
+  let ok = false;
+  try { ok = await hydrate(doc); } catch(e){ ok = false; }
+  hideLoad();
+  restoring = false;
+  if (!ok) return false;
+  $('home').hidden = true;
   buildSheet(); bgDirty = true; layout(); draw(); updateUndo();
   return true;
+}
+
+/* Un média n'est supprimé que si plus aucun brouillon ne s'en sert. */
+async function gcMedia(){
+  try {
+    const docs = await allDocs();
+    const keep = new Set();
+    docs.forEach(d => (d.lib || []).forEach(e => keep.add(e.uid)));
+    S.lib.forEach(m => { if (m.uid) keep.add(m.uid); });
+    const keys = await allMediaKeys();
+    for (const k of (keys || [])) if (!keep.has(k)) await idb('media', 'readwrite', s => s.delete(k));
+  } catch(e){}
+}
+async function removeDraft(id){
+  await delDoc(id).catch(() => {});
+  if (docId === id) docId = null;
+  const cur = await getCurrent().catch(() => null);
+  if (cur === id) await setCurrent(null).catch(() => {});
+  await gcMedia();
+  buildDrafts();
+}
+
+/* L'étagère de brouillons, en haut de l'écran d'accueil. */
+async function buildDrafts(){
+  const host = $('drafts');
+  if (!host) return;
+  let docs = [];
+  try { docs = await allDocs(); } catch(e){}
+  docs = docs.filter(d => d.lib && d.lib.length).sort((a, b) => b.at - a.at);
+  host.innerHTML = '';
+  if (!docs.length){ host.hidden = true; return; }
+  host.hidden = false;
+  host.appendChild(h('h2', {}, 'Tes brouillons'));
+  const grid = h('div', {class:'cards'});
+  docs.forEach(d => {
+    const art = d.thumb
+      ? h('img', {src:d.thumb, alt:''})
+      : h('div', {class:'draft-blank'});
+    const when = new Date(d.at);
+    const card = h('button', {class:'card', onclick:() => openDraft(d.id)}, art,
+      h('b', {}, d.name),
+      h('span', {}, when.toLocaleDateString('fr-FR', {day:'numeric', month:'short'}) + ' · ' +
+        when.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})));
+    const kill = h('button', {class:'draft-x', 'aria-label':'Supprimer ce brouillon',
+      onclick:e => {
+        e.stopPropagation();
+        showOverlay(h('div', {class:'ov-box'}, h('b', {}, 'Supprimer ce brouillon ?'),
+          h('p', {}, d.name + ' — cette action est définitive.')),
+          [btn('Supprimer', () => { closeOverlay(); removeDraft(d.id); }, 'btn danger big'),
+           btn('Annuler', closeOverlay, 'btn')]);
+      }}, '×');
+    grid.appendChild(h('div', {class:'draft'}, card, kill));
+  });
+  host.appendChild(grid);
 }
 
 /* ================= Démarrage ================= */
@@ -3224,10 +3337,7 @@ async function restoreSession(){
 document.addEventListener('visibilitychange', () => {
   if (document.hidden){
     S.lib.forEach(m => { if (m.kind === 'video' && !m.el.paused){ try { m.el.pause(); } catch(e){} } });
-    if (!restoring && S.lib.length){ clearTimeout(saveT); try { putState({at:Date.now(), snap:snapshot(),
-      tpl:S.tpl, tab:S.tab, video:Object.assign({}, S.video), cal:Object.assign({}, S.cal),
-      audio:(S.lib.find(m => m.id === S.audio.id) || {}).uid || null,
-      lib:S.lib.filter(m => m.uid).map(m => ({uid:m.uid, id:m.id, start:m.start || 0}))}); } catch(e){} }
+    flushSave(false);
   } else draw();
 });
 window.addEventListener('resize', layout);
@@ -3243,7 +3353,7 @@ if (navigator.storage && navigator.storage.persist) navigator.storage.persist().
    Ignoré si la page est ouverte en file:// (Fichiers, AirDrop…). */
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0)
   navigator.serviceWorker.register('sw.js').catch(() => {});
-restoreSession().then(ok => { if (ok) toast('Montage repris là où tu l’avais laissé.', 2600); }).catch(() => {});
+restoreSession().then(ok => { if (!ok) buildDrafts(); }).catch(() => {});
 })();
 </script>
 </body>
