@@ -150,10 +150,10 @@ header .tools button:active{background:rgba(255,255,255,.12)}
 .pickgrid .thumb{aspect-ratio:1}
 #trim{position:fixed;inset:0;z-index:36;background:rgba(10,18,16,.94);display:flex;flex-direction:column;justify-content:flex-end}
 #trimTop{flex:1;display:flex;align-items:center;justify-content:center;padding:18px}
-#trimTop video{max-width:100%;max-height:100%;border-radius:12px;background:#15171b}
+#trimTop video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:var(--r3);background:#15171b}
 #trimPanel{background:var(--sheet);border-radius:24px 24px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px -24px #000}
-.strip{display:flex;align-items:center;gap:8px;background:#8c8c8c;border-radius:12px;padding:6px;user-select:none}
-.strip .play{width:46px;height:46px;flex:none;border:0;border-radius:9px;background:rgba(255,255,255,.18);color:#fff;font-size:18px}
+.strip{display:flex;align-items:center;gap:8px;background:#0f1211;border-radius:var(--r2);padding:6px;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.strip .play{width:48px;height:48px;flex:none;border:0;border-radius:11px;background:var(--fill);color:var(--ink);font-size:16px}
 .stripBox{position:relative;flex:1;overflow:hidden;border-radius:8px;touch-action:none;height:76px}
 .stripBox canvas{display:block;width:100%;height:100%}
 .win{position:absolute;top:0;bottom:0;border:3px solid #fff;border-radius:12px;box-shadow:0 0 0 2000px rgba(0,0,0,.5);pointer-events:none}
@@ -680,7 +680,7 @@ function makeThumb(m){
 }
 async function ingest(files){
   const out = [];
-  let done = 0;
+  let done = 0, failReason = '';
   const anyVid = files.some(isVideoFile);
   showLoad(files.length > 1 ? `Import de ${files.length} fichiers` : (anyVid ? 'Import de la vidéo' : 'Import de la photo'),
     anyVid ? 'Les vidéos mettent quelques secondes à s’ouvrir.' : '');
@@ -690,7 +690,9 @@ async function ingest(files){
     await nextFrame();
     const m = isVideoFile(f) ? await loadVideo(f) : await loadImage(f);
     done++;
-    if (!m) continue;
+    /* Une vidéo refusée : on lit ses en-têtes pour dire précisément pourquoi
+       plutôt que de la laisser disparaître sans un mot. */
+    if (!m){ if (isVideoFile(f)) failReason = await explainVideo(f); continue; }
     m.id = ++mid; m.thumb = makeThumb(m);
     if (m.kind === 'video'){ m.file = f; if (S.audio.id == null) S.audio.id = m.id; }
     rememberMedia(m, f);
@@ -703,11 +705,11 @@ async function ingest(files){
   hideLoad();
   if (!out.length){
     const heic = files.some(isHeic);
-    toast(heic
+    toast(failReason ? failReason : (heic
       ? "Ce format HEIC n’est pas lisible par ce navigateur. Ouvre l’app dans Safari, ou règle Réglages › Appareil photo › Formats sur « Le plus compatible »."
-      : "Impossible d'ouvrir ce fichier. Essaie une photo JPEG ou une vidéo MP4/MOV.", 6500);
+      : "Impossible d'ouvrir ce fichier. Essaie une photo JPEG ou une vidéo MP4/MOV."), 8000);
   }
-  else if (out.length < files.length) toast(`${files.length - out.length} fichier(s) n'ont pas pu être ouverts.`, 4000);
+  else if (out.length < files.length) toast(failReason || `${files.length - out.length} fichier(s) n'ont pas pu être ouverts.`, 7000);
   else hideToast();
   return out;
 }
@@ -2295,14 +2297,86 @@ function updateUndo(){
   $('btnRedo').disabled = !HIST.future.length;
 }
 
+/* Lecture des en-têtes d'un MP4 pour expliquer pourquoi une vidéo ne s'ouvre
+   pas. On ne lit que les quelques kilo-octets utiles, jamais le fichier entier. */
+async function probeMp4(file){
+  const CHROMA = ['monochrome', '4:2:0', '4:2:2', '4:4:4'];
+  const buf = async (off, len) => new Uint8Array(await file.slice(off, off + len).arrayBuffer());
+  const u32 = (b, i) => (b[i] << 24 | b[i+1] << 16 | b[i+2] << 8 | b[i+3]) >>> 0;
+  const str = (b, i) => String.fromCharCode(b[i], b[i+1], b[i+2], b[i+3]);
+  try {
+    /* 1. Trouver moov parmi les boîtes de premier niveau. */
+    let off = 0, moov = null;
+    for (let guard = 0; guard < 64 && off < file.size; guard++){
+      const head = await buf(off, 16);
+      if (head.length < 8) break;
+      let size = u32(head, 0);
+      const type = str(head, 4);
+      if (size === 1) size = Number(new DataView(head.buffer).getBigUint64(8));
+      if (!size || size < 8) break;
+      if (type === 'moov'){ moov = await buf(off, Math.min(size, 6e6)); break; }
+      off += size;
+    }
+    if (!moov) return null;
+
+    /* 2. Descendre jusqu'à stsd, puis lire le format de l'échantillon. */
+    const find = (b, type, from, to) => {
+      let i = from;
+      while (i + 8 <= to){
+        const size = u32(b, i);
+        if (size < 8) return null;
+        if (str(b, i + 4) === type) return [i + 8, i + size];
+        i += size;
+      }
+      return null;
+    };
+    let range = [8, moov.length];
+    for (const step of ['trak', 'mdia', 'minf', 'stbl', 'stsd']){
+      range = find(moov, step, range[0], range[1]);
+      if (!range) return null;
+    }
+    const entry = range[0] + 8;                 /* stsd : version/flags + nombre */
+    const codec = str(moov, entry + 4);
+    const out = {codec};
+    /* Après l'en-tête de boîte (8) viennent 78 octets de champs vidéo, puis les
+       boîtes de configuration. */
+    const entryEnd = entry + u32(moov, entry);
+    const cfg = find(moov, codec === 'avc1' || codec === 'avc3' ? 'avcC' : 'hvcC',
+      entry + 8 + 78, Math.min(entryEnd, range[1]));
+    if (cfg && (codec === 'hvc1' || codec === 'hev1')){
+      out.chroma = CHROMA[moov[cfg[0] + 16] & 3];
+      out.bits = (moov[cfg[0] + 17] & 7) + 8;
+    }
+    return out;
+  } catch(e){ return null; }
+}
+
+/* Message clair quand une vidéo refuse de s'ouvrir. */
+async function explainVideo(file){
+  const p = await probeMp4(file);
+  if (!p) return 'Cette vidéo n’a pas pu être ouverte. Essaie de l’exporter depuis Photos avant de l’importer.';
+  if ((p.codec === 'hvc1' || p.codec === 'hev1') && p.chroma && p.chroma !== '4:2:0')
+    return `Vidéo en HEVC ${p.chroma} ${p.bits} bits : Safari ne sait lire que le 4:2:0. ` +
+      'Règle ton appareil en 4:2:0, ou passe le fichier par Photos qui le convertira.';
+  if (p.codec === 'hvc1' || p.codec === 'hev1')
+    return `Vidéo en HEVC ${p.bits || 8} bits non lue par ce navigateur. Essaie via Photos.`;
+  return `Format vidéo « ${p.codec} » non pris en charge par ce navigateur.`;
+}
+
 /* ================= Recadrage du temps ================= */
 const TRIM = {m:null, item:null, drag:null, vid:null};
 function fmtT(t){ return t.toFixed(1).replace('.', ',') + ' s'; }
-async function buildStrip(m){
-  if (m.strip) return m.strip;
+/* La bande d'images. Avant, chaque vignette faisait la largeur du format de la
+   vidéo : sur du 16:9 la bande était quatre fois trop large, et le CSS
+   l'écrasait. Maintenant on taille la bande à la place disponible, avec des
+   vignettes carrées recadrées au centre. */
+async function buildStrip(m, pxW, pxH){
+  if (m.strip && m.stripW === pxW) return m.strip;
   const v = m.el, dur = isFinite(v.duration) ? v.duration : 0;
-  const N = 8, H2 = 152, W2 = Math.round(H2*(m.w/m.h))*1;
-  const [c, x] = offscreen(W2*N, H2);
+  const N = clamp(Math.round(pxW/pxH), 4, 14);
+  const cw = Math.round(pxW/N);
+  const [c, x] = offscreen(cw*N, pxH);
+  const sc = Math.max(cw/m.w, pxH/m.h), dw = m.w*sc, dh = m.h*sc;
   const was = v.currentTime, playing = !v.paused;
   v.pause();
   for (let i = 0; i < N; i++){
@@ -2310,11 +2384,17 @@ async function buildStrip(m){
     await new Promise(r => { const to = setTimeout(r, 900);
       v.addEventListener('seeked', () => { clearTimeout(to); r(); }, {once:true});
       try { v.currentTime = t; } catch(e){ r(); } });
-    try { x.drawImage(v, i*W2, 0, W2, H2); } catch(e){}
+    try {
+      x.save();
+      x.beginPath(); x.rect(i*cw, 0, cw, pxH); x.clip();
+      x.drawImage(v, i*cw + (cw - dw)/2, (pxH - dh)/2, dw, dh);
+      x.restore();
+    } catch(e){}
   }
   try { v.currentTime = was; } catch(e){}
   if (playing) v.play().catch(() => {});
-  m.strip = c; return c;
+  m.strip = c; m.stripW = pxW;
+  return c;
 }
 function openTrim(it){
   const m = it && it.media;
@@ -2418,19 +2498,65 @@ function buildTrimUI(){
     m.end = m.start + len;
     sync(); restart(); draw();
   };
-  P.appendChild(section(null, strip, info,
-    h('div', {class:'row'},
-      btn('‹ −1 s', () => nudge(-1)),
-      btn('+1 s ›', () => nudge(1))),
-    h('div', {class:'row'}, btn('Tout garder', () => { m.start = 0; m.end = dur; sync(); restart(); draw(); })),
-    h('p', {class:'hint'}, 'Tire les deux bords blancs pour choisir le début et la fin. Glisse au milieu pour déplacer le passage sans changer sa durée.'),
+  /* La bande reste visible en permanence ; en dessous, les réglages changent
+     selon l'onglet. C'est la disposition de tous les outils de montage. */
+  const tools = h('div', {});
+  const paintTools = () => {
+    tools.innerHTML = '';
+    if (TRIM.tab === 'Vitesse'){
+      tools.appendChild(section(null,
+        chips(['0,25×', '0,5×', '1×', '2×', '4×'],
+          k => Math.abs((S.video.speed || 1) - SPEEDS[k]) < .001,
+          k => { S.video.speed = SPEEDS[k];
+            S.lib.forEach(x => { if (x.kind === 'video'){ try { x.el.playbackRate = SPEEDS[k]; } catch(e){} } });
+            try { prev.playbackRate = SPEEDS[k]; } catch(e){}
+            paintTools(); sync(); draw(); }),
+        h('p', {class:'hint'}, 'Ralenti ou accéléré. La durée finale suit : à 2×, deux fois plus court.')));
+    } else if (TRIM.tab === 'Couleur'){
+      tools.appendChild(section(null,
+        h('div', {class:'row'},
+          filePick(LUT.data ? 'Changer de LUT' : 'Charger une LUT .cube',
+            {accept:'.cube,.CUBE,text/plain'},
+            async fs => { if (await loadCube(fs[0])){ bgDirty = true; paintTools(); draw(); } }),
+          LUT.data ? btn('Retirer', () => { LUT.data = null; LUT.name = ''; paintTools(); draw(); }, 'btn danger') : null),
+        LUT.data ? slider('Intensité', 0, 1, .01, () => LUT.amount, v => { LUT.amount = v; draw(); }, pct) : null,
+        LUT.data ? compareBtn() : null,
+        h('p', {class:'hint'}, LUT.data ? 'LUT active : ' + LUT.name
+          : 'Charge un .cube de coloriste. Il reste sur ton téléphone.')));
+    } else if (TRIM.tab === 'Cadre'){
+      tools.appendChild(section(null,
+        h('div', {class:'row'}, btn('Recadrer à la main', () => { S.crop = true; closeTrim(); refresh(); }, 'btn primary')),
+        h('p', {class:'hint'}, 'Ferme cet écran et te laisse déplacer et agrandir l’image dans son cadre, avec les doigts.')));
+    } else {
+      tools.appendChild(section(null,
+        h('div', {class:'row'}, btn('‹ −1 s', () => nudge(-1)), btn('+1 s ›', () => nudge(1))),
+        h('div', {class:'row'}, btn('Tout garder', () => { m.start = 0; m.end = dur; sync(); restart(); draw(); })),
+        h('p', {class:'hint'}, 'Tire les deux bords blancs pour le début et la fin. Glisse au milieu pour déplacer le passage sans changer sa durée.')));
+    }
+  };
+  const tabs = h('div', {class:'tabs'});
+  const paintTabs = () => {
+    tabs.innerHTML = '';
+    ['Découper', 'Vitesse', 'Couleur', 'Cadre'].forEach(t =>
+      tabs.appendChild(h('button', {class:TRIM.tab === t ? 'on' : '',
+        onclick:() => { TRIM.tab = t; paintTabs(); paintTools(); }}, t)));
+  };
+  TRIM.tab = TRIM.tab || 'Découper';
+  paintTabs(); paintTools();
+  P.appendChild(section(null, strip, info, tabs, tools,
     h('div', {class:'row'}, btn('Terminé', closeTrim, 'btn primary big'))));
   box.classList.add('loading');
-  showLoad('Préparation de la bande', 'Extraction des images de la vidéo…');
-  buildStrip(m).then(c => {
-    hideLoad();
-    const x = cv2.getContext('2d'); cv2.width = c.width; cv2.height = c.height; x.drawImage(c, 0, 0);
-    box.classList.remove('loading');
+  /* On fabrique la bande à la taille réelle de son emplacement, sinon elle
+     s'affiche écrasée. */
+  requestAnimationFrame(() => {
+    const r = box.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const pxW = Math.max(200, Math.round(r.width*dpr)), pxH = Math.round(r.height*dpr);
+    buildStrip(m, pxW, pxH).then(c => {
+      cv2.width = c.width; cv2.height = c.height;
+      cv2.getContext('2d').drawImage(c, 0, 0);
+      box.classList.remove('loading');
+    });
   });
   sync();
 }
